@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="/src/main.ts"></script>
+    <title>Darg And Drop</title>
+  </head>
+  <body>
+    <template class="form-template">
+      <form class="form">
+        <div class="form-control">
+          <label for="title">Title</label>
+          <input type="text" id="title" />
+        </div>
+        <div class="form-control">
+          <label for="description">Description</label>
+          <input type="text" id="description" />
+        </div>
+        <button type="submit">Add Project</button>
+      </form>
+    </template>
+
+    <template class="projects-template">
+      <div class="project-container">
+        <h2 class="list-header">The project header</h2>
+        <ul class="project-list">
+          <div class="project">
+            <div class="project">
+              <h3 class="project-title">The Project title</h3>
+              <p class="project-content">The project content</p>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </template>
+    <div id="app"></div>
+  </body>
+</html>
