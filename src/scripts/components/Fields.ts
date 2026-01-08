@@ -1,3 +1,4 @@
+import { projectState } from "../store/ProjectState";
 import type { InputsType } from "../types";
 import { validationInput } from "../utils/validation_helpers";
 import { Popup } from "./Popup";
@@ -49,6 +50,10 @@ export class Fields {
       new Popup(descValidation, "Description Error");
       return;
     }
+
+    projectState.createProject(titleValue, descValue);
+    titleInput.value = "";
+    descInput.value = "";
   }
 
   /**
