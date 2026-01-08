@@ -4,6 +4,7 @@ export class Popup extends Base<HTMLDivElement> {
   private errorMessage: string;
   private _closeBtn: HTMLButtonElement;
   private _overlay: HTMLDivElement;
+  private isOpen: boolean = false;
 
   constructor(error: string, type: string) {
     super({
@@ -17,6 +18,11 @@ export class Popup extends Base<HTMLDivElement> {
     this.errorMessage = error;
     this._showErrorMessage(this.errorMessage, type);
     this._closeBtn.addEventListener("click", this._hideErrorMessage.bind(this));
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (this.isOpen) {
+        this._closeDialog(e);
+      }
+    });
   }
 
   private _showErrorMessage(msg: string, type: string) {
@@ -28,10 +34,19 @@ export class Popup extends Base<HTMLDivElement> {
     this._overlay.classList.toggle("visible");
     content.textContent = msg;
     title.textContent = type;
+    this.isOpen = true;
   }
 
   private _hideErrorMessage() {
     this.element.classList.toggle("visible");
     this._overlay.classList.toggle("visible");
+  }
+
+  private _closeDialog(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      this.element.classList.remove("visible");
+      this._overlay.classList.remove("visible");
+      this.isOpen = false;
+    }
   }
 }
