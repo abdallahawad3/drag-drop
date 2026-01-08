@@ -1,7 +1,7 @@
-export type ADD_PROJECT = {
+export type ADD_PROJECT_VALIDATION = {
   required: boolean;
-  type: string;
   target: string;
-  minLEngth: number;
+  value: string;
+  minLength: number;
   maxLength: number;
 };
