@@ -1,5 +1,6 @@
 import type { InputsType } from "../types";
 import { validationInput } from "../utils/validation_helpers";
+import { Popup } from "./Popup";
 
 export class Fields {
   private _host: HTMLDivElement;
@@ -33,7 +34,7 @@ export class Fields {
     });
 
     if (titleValidation.length > 0) {
-      alert(titleValidation);
+      new Popup(titleValidation, "Title Error");
       return;
     }
     const descValidation = validationInput({
@@ -45,11 +46,9 @@ export class Fields {
     });
 
     if (descValidation.length > 0) {
-      alert(descValidation);
+      new Popup(descValidation, "Description Error");
       return;
     }
-
-    console.log("VALIDATION ACCESS");
   }
 
   /**
