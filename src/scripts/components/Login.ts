@@ -6,7 +6,6 @@ export class Login extends Base<HTMLDivElement> {
   private static _instance: Login;
   private _usernameInput!: HTMLInputElement;
   private _passwordInput!: HTMLInputElement;
-  private _loginIcon!: HTMLDivElement;
   private _loginButton!: HTMLButtonElement;
   public isLoggedIn: boolean = localStorage.getItem("isLoggedIn")
     ? JSON.parse(localStorage.getItem("isLoggedIn")!)
@@ -21,10 +20,8 @@ export class Login extends Base<HTMLDivElement> {
     this.element.classList.add("visible");
     this._usernameInput = this.element.querySelector("#username") as HTMLInputElement;
     this._passwordInput = this.element.querySelector("#password") as HTMLInputElement;
-    this._loginIcon = this.element.querySelector(".login-icon") as HTMLDivElement;
     this._loginButton = this.element.querySelector("button") as HTMLButtonElement;
     this._loginButton.addEventListener("click", this._handleLogin.bind(this));
-    this._loginIcon.addEventListener("click", this._closeLogin.bind(this));
     this.isLogin();
   }
 
