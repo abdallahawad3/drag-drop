@@ -27,18 +27,21 @@
 
     <template class="projects-template">
       <div class="project-container">
-        <h2 class="list-header">The project header</h2>
-        <ul class="project-list">
-          <div class="project">
-            <div class="project">
-              <h3 class="project-title">The Project title</h3>
-              <p class="project-content">The project content</p>
-            </div>
-          </div>
-        </ul>
+        <h2 class="list-header"></h2>
+        <ul class="project-lists"></ul>
       </div>
     </template>
 
+    <template class="single-project-template">
+      <div class="project-list" draggable="true">
+        <h2 class="project-title"></h2>
+        <p class="project-description">${project.description}</p>
+        <div class="project-footer">
+          <i class="bx bx-trash"></i>
+          <i class="bx bx-edit"></i>
+        </div>
+      </div>
+    </template>
     <template class="popup-template">
       <div class="popup-container">
         <div class="header">

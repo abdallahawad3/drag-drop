@@ -4,7 +4,10 @@ import { ProjectRules } from "./ProjectRules";
 class ProjectState {
   private static _instance: ProjectState;
   private _projects: ProjectRules[] = [];
-  constructor() {}
+  private _listeners: Array<(projects: ProjectRules[]) => void> = [];
+  constructor() {
+    console.log(this._listeners);
+  }
 
   /**
    * Retrieves the singleton instance of the `ProjectState` class.
@@ -35,6 +38,17 @@ class ProjectState {
     });
 
     this._projects.push(newProject);
+    this._runListeners();
+  }
+
+  public addListener(listenerFn: (projects: ProjectRules[]) => void) {
+    this._listeners.push(listenerFn);
+  }
+
+  private _runListeners() {
+    for (const listenerFn of this._listeners) {
+      listenerFn([...this._projects]);
+    }
   }
 }
 

@@ -5,9 +5,27 @@
   }
 
   .project-list {
-    border: 1px solid #bfbfbf;
+    border: 2px solid #fff;
+    border-radius: 2px;
     padding: 10px 5px;
     border-radius: 2px;
     background-color: #0066a1;
+    margin-bottom: 5px;
+    cursor: pointer;
+    .project-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 5px;
+      border-top: 1px solid #fff;
+      padding-top: 5px;
+      i {
+        cursor: pointer;
+        color: #fff;
+        &:hover {
+          color: #ff4d4d;
+        }
+      }
+    }
   }
 }
