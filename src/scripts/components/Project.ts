@@ -1,6 +1,7 @@
 import type { ProjectRules } from "../store/ProjectRules";
 import { projectState } from "../store/ProjectState";
 import { Base } from "./Base";
+import { Popup } from "./Popup";
 import { UpdateProject } from "./UpdateProject";
 
 export class Project extends Base<HTMLDivElement> {
@@ -38,7 +39,16 @@ export class Project extends Base<HTMLDivElement> {
   }
 
   private _deleteProject() {
-    projectState.deleteProject(this._project.id);
+    new Popup(
+      "Are you sure you want to delete this project?",
+      "Delete Project",
+      true,
+      (confirm: boolean) => {
+        if (confirm) {
+          projectState.deleteProject(this._project.id);
+        }
+      }
+    );
   }
 
   /**
