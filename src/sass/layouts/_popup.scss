@@ -1,5 +1,6 @@
 .popup-container.visible {
   position: absolute;
+  z-index: 1000;
   inset: 0;
   max-width: 500px;
   display: block;
@@ -62,7 +63,7 @@
   visibility: visible;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5); /* slight dark tint optional */
-
+  z-index: 999;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   inset: 0;

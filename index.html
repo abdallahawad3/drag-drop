@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module" src="/src/main.ts"></script>
-    <link
-      href="https://cdn.boxicons.com/3.0.7/fonts/basic/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.boxicons.com/3.0.7/fonts/basic/boxicons.min.css" rel="stylesheet" />
     <title>Darg And Drop</title>
   </head>
   <body>
@@ -49,6 +46,26 @@
           <button><i class="bx bx-x"></i></button>
         </div>
         <p class="content"></p>
+      </div>
+    </template>
+
+    <template class="login">
+      <div class="login-container">
+        <div class="login-header">
+          <h2>Login</h2>
+          <i class="bx bx-x login-icon"></i>
+        </div>
+        <form class="login-form">
+          <div class="form-control">
+            <label for="username">Username</label>
+            <input type="text" id="username" />
+          </div>
+          <div class="form-control">
+            <label for="password">Password</label>
+            <input type="password" id="password" />
+          </div>
+          <button type="submit">Login</button>
+        </form>
       </div>
     </template>
 
