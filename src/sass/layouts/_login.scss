@@ -1,4 +1,9 @@
 #login-form {
+  display: none;
+}
+
+#login-form.visible {
+  display: block;
   background-color: #000000;
   position: fixed;
   top: 50%;

@@ -18,13 +18,14 @@ export class Login extends Base<HTMLDivElement> {
       templateId: "login",
       isBefore: true,
     });
-
+    this.element.classList.add("visible");
     this._usernameInput = this.element.querySelector("#username") as HTMLInputElement;
     this._passwordInput = this.element.querySelector("#password") as HTMLInputElement;
     this._loginIcon = this.element.querySelector(".login-icon") as HTMLDivElement;
     this._loginButton = this.element.querySelector("button") as HTMLButtonElement;
-    console.log(this._loginButton);
     this._loginButton.addEventListener("click", this._handleLogin.bind(this));
+    this._loginIcon.addEventListener("click", this._closeLogin.bind(this));
+    this.isLogin();
   }
 
   public static getInstance(): Login {
@@ -63,8 +64,26 @@ export class Login extends Base<HTMLDivElement> {
       return;
     }
 
-    console.log("True Values");
+    this._loginUser();
+    this._closeLogin();
   };
+
+  private _closeLogin = () => {
+    this.element.classList.remove("visible");
+  };
+
+  private _loginUser() {
+    this.isLoggedIn = true;
+    localStorage.setItem("isLoggedIn", JSON.stringify(this.isLoggedIn));
+    window.location.reload();
+  }
+
+  public isLogin(): boolean {
+    if (this.isLoggedIn) {
+      this._closeLogin();
+    }
+    return this.isLoggedIn;
+  }
 }
 
 export const loginComponent = Login.getInstance();
