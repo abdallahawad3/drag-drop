@@ -4,10 +4,10 @@ import "./sass/layouts/_form.scss";
 import "./sass/layouts/_projectList.scss";
 import "./sass/layouts/_popup.scss";
 import "./sass/layouts/_login.scss";
+import "./sass/layouts/_updateProjects.scss";
 import { Fields } from "./scripts/components/Fields";
 import { ProjectList } from "./scripts/components/ProjectList";
 import { loginComponent } from "./scripts/components/Login";
-// import { Popup } from "./scripts/components/Popup";
 
 function checkLogin() {
   const login = localStorage.getItem("isLoggedIn")

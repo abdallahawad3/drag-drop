@@ -1,6 +1,7 @@
 import type { ProjectRules } from "../store/ProjectRules";
 import { projectState } from "../store/ProjectState";
 import { Base } from "./Base";
+import { UpdateProject } from "./UpdateProject";
 
 export class Project extends Base<HTMLDivElement> {
   private _project: ProjectRules;
@@ -22,11 +23,9 @@ export class Project extends Base<HTMLDivElement> {
     this._renderProject();
     this._deleteBtn.addEventListener("click", this._deleteProject.bind(this));
 
-    // TODO: Implement the edit functionality
     this._editBtn.addEventListener("click", () => {
-      console.log("ID ==>", this._project.id);
+      new UpdateProject(this._project.title, this._project.description, this._project.id);
     });
-
     this._runDragging();
   }
   private _renderProject() {
