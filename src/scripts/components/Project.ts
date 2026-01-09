@@ -31,7 +31,9 @@ export class Project extends Base<HTMLDivElement> {
   }
   private _renderProject() {
     const titleElement = this.element.querySelector(".project-title") as HTMLHeadingElement;
-    const descriptionElement = this.element.querySelector(".project-description") as HTMLParagraphElement;
+    const descriptionElement = this.element.querySelector(
+      ".project-description"
+    ) as HTMLParagraphElement;
     titleElement.textContent = this._project.title;
     descriptionElement.textContent = this._project.description;
   }

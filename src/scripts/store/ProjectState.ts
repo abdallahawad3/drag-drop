@@ -5,7 +5,9 @@ class ProjectState {
   private static _instance: ProjectState;
   private _projects: ProjectRules[] = [];
   private _listeners: Array<(projects: ProjectRules[]) => void> = [];
-  private _localStorageProjects: ProjectRules[] = localStorage.getItem("projects") ? JSON.parse(localStorage.getItem("projects")!) : [];
+  private _localStorageProjects: ProjectRules[] = localStorage.getItem("projects")
+    ? JSON.parse(localStorage.getItem("projects")!)
+    : [];
   constructor() {
     this._projects = this._localStorageProjects;
   }
@@ -76,6 +78,15 @@ class ProjectState {
   private _runListeners() {
     for (const listenerFn of this._listeners) {
       listenerFn([...this._projects]);
+    }
+  }
+
+  public moveProject(projectId: string, newStatus: ProjectStatus) {
+    const project = this._projects.find((proj) => proj.id === projectId);
+    if (project && project.status !== newStatus) {
+      project.status = newStatus;
+      localStorage.setItem("projects", JSON.stringify(this._projects));
+      this._runListeners();
     }
   }
 }
