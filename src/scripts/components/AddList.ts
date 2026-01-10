@@ -116,6 +116,32 @@ export class AddList extends Base<HTMLDivElement> {
     this._notifyListeners();
     window.location.reload();
   }
+
+  editProjectsInList(listId: string, project: ProjectRules) {
+    const list = this._lists.find((lst) => lst.id === listId);
+    const projIndex = list?.projects.findIndex((proj) => proj.id === project.id);
+    if (list && projIndex !== undefined && projIndex > -1) {
+      list.projects[projIndex] = project;
+      this._saveListsToLocalStorage();
+      this._notifyListeners();
+    }
+
+    window.location.reload();
+  }
+
+  deleteProjectFromList(listId: string, projectId: string) {
+    console.log(listId);
+    console.log(projectId);
+
+    const list = this._lists.find((lst) => lst.id === listId);
+    if (list) {
+      const newProjects = list.projects.filter((proj) => proj.id !== projectId);
+      list.projects = newProjects;
+      this._saveListsToLocalStorage();
+      this._notifyListeners();
+    }
+    window.location.reload();
+  }
 }
 
 export const addListInstance = AddList.getInstance();

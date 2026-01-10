@@ -1,24 +1,26 @@
-import { projectState } from "../store/ProjectState";
+import { ProjectStatus } from "../enums";
 import { validationInput } from "../utils/validation_helpers";
+import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 
 export class UpdateProject extends Base<HTMLDivElement> {
   private _title: string;
   private _description: string;
   private _id: string;
+  private _listId: string;
   private titleInput: HTMLInputElement;
   private descriptionInput: HTMLInputElement;
   private _submitBtn: HTMLButtonElement;
   private _cancelBtn: HTMLButtonElement;
   private isErrorExists: boolean = false;
-  constructor(title: string, description: string, id: string) {
+  constructor(title: string, description: string, id: string, listId: string) {
     super({
       elementId: "update-project-form",
       hostId: "app",
       templateId: "update-project",
       isBefore: true,
     });
-
+    this._listId = listId;
     this.titleInput = this.element.querySelector("#title") as HTMLInputElement;
     this.descriptionInput = this.element.querySelector("#description") as HTMLInputElement;
     this._submitBtn = this.element.querySelector("button") as HTMLButtonElement;
@@ -106,6 +108,13 @@ export class UpdateProject extends Base<HTMLDivElement> {
   }
 
   private _EditProject() {
-    projectState.EditProject(this._id, this._title, this._description);
+    addListInstance.editProjectsInList(this._listId, {
+      id: this._id,
+      title: this._title,
+      description: this._description,
+      status: ProjectStatus.Initial,
+      listId: this._listId, // You might want to pass the status if needed
+    });
+    // projectState.EditProject(this._id, this._title, this._description);
   }
 }

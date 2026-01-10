@@ -1,5 +1,5 @@
 import type { ProjectRules } from "../store/ProjectRules";
-import { projectState } from "../store/ProjectState";
+import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Popup } from "./Popup";
 import { UpdateProject } from "./UpdateProject";
@@ -8,6 +8,7 @@ export class Project extends Base<HTMLDivElement> {
   private _project: ProjectRules;
   private _deleteBtn: HTMLElement;
   private _editBtn: HTMLElement;
+  private _projectListId: string;
   constructor(project: ProjectRules, projectListId: string) {
     super({
       elementId: project.id,
@@ -18,14 +19,19 @@ export class Project extends Base<HTMLDivElement> {
 
     this._deleteBtn = this.element.querySelector(".bx-trash") as HTMLElement;
     this._editBtn = this.element.querySelector(".bx-edit") as HTMLElement;
-
+    this._projectListId = projectListId;
     this._project = project;
     this.element.id = project.id;
     this._renderProject();
     this._deleteBtn.addEventListener("click", this._deleteProject.bind(this));
 
     this._editBtn.addEventListener("click", () => {
-      new UpdateProject(this._project.title, this._project.description, this._project.id);
+      new UpdateProject(
+        this._project.title,
+        this._project.description,
+        this._project.id,
+        projectListId
+      );
     });
     this._runDragging();
   }
@@ -45,7 +51,7 @@ export class Project extends Base<HTMLDivElement> {
       true,
       (confirm: boolean) => {
         if (confirm) {
-          projectState.deleteProject(this._project.id);
+          addListInstance.deleteProjectFromList(this._projectListId, this._project.id);
         }
       }
     );
