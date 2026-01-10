@@ -1,6 +1,7 @@
+import { addListInstance } from "../components/AddList";
 import { ProjectStatus } from "../enums";
 import { ProjectRules } from "./ProjectRules";
-
+import { v4 as uuid } from "uuid";
 class ProjectState {
   private static _instance: ProjectState;
   private _projects: ProjectRules[] = [];
@@ -32,15 +33,17 @@ class ProjectState {
    * @param title - The title of the project.
    * @param description - A brief description of the project.
    */
-  public createProject(title: string, description: string) {
+  public createProject(title: string, description: string, listId: string) {
     const newProject = new ProjectRules({
-      id: Math.random().toString(),
+      id: uuid(),
       title,
       description,
       status: ProjectStatus.Initial,
+      listId,
     });
 
     this._projects.push(newProject);
+    addListInstance.addProjectToList(listId, newProject);
     localStorage.setItem("projects", JSON.stringify(this._projects));
     this._runListeners();
   }
@@ -81,13 +84,29 @@ class ProjectState {
     }
   }
 
-  public moveProject(projectId: string, newStatus: ProjectStatus) {
+  public moveProject(projectId: string, newListId: string) {
     const project = this._projects.find((proj) => proj.id === projectId);
-    if (project && project.status !== newStatus) {
-      project.status = newStatus;
-      localStorage.setItem("projects", JSON.stringify(this._projects));
-      this._runListeners();
-    }
+    if (!project) return; // project doesn't exist → nothing to do
+
+    const oldListId = project.listId;
+
+    // No need to move if it's already in the target list
+    if (oldListId === newListId) return;
+
+    // 1. Update project's list reference
+    project.listId = newListId;
+
+    // 2. Update both lists (remove from old, add to new)
+    addListInstance.updateProjectsInList(newListId, project, oldListId);
+
+    // 3. Persist projects array (it contains the updated listId)
+    localStorage.setItem("projects", JSON.stringify(this._projects));
+
+    // 4. Notify listeners/UI
+    this._runListeners();
+  }
+  public getProjectById(projectId: string): ProjectRules | undefined {
+    return this._projects.find((project) => project.id === projectId);
   }
 }
 

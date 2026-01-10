@@ -18,13 +18,23 @@
           <label for="description">Description</label>
           <input type="text" id="description" />
         </div>
+        <div class="form-control">
+          <label for="list">Select List</label>
+          <select id="list"></select>
+        </div>
         <button type="submit">Add Project</button>
       </form>
     </template>
 
     <template class="projects-template">
       <div class="project-container">
-        <h2 class="list-header"></h2>
+        <div class="list-header-container">
+          <h2 class="list-header"></h2>
+          <i class="bx bx-edit edit-icon"></i>
+          <i class="bx bx-plus add-list-icon"></i>
+          <i class="bx bx-x close-list-icon"></i>
+          <i class="bx bx-trash delete-list-icon"></i>
+        </div>
         <ul class="project-lists"></ul>
       </div>
     </template>
@@ -39,6 +49,7 @@
         </div>
       </div>
     </template>
+
     <template class="popup-template">
       <div class="popup-container">
         <div class="header">
@@ -84,6 +95,15 @@
             <input type="text" id="description" />
           </div>
           <button type="submit">Update</button>
+        </form>
+      </div>
+    </template>
+
+    <template class="add-list">
+      <div>
+        <form class="add-list-container">
+          <input type="text" class="add-list-input" placeholder="New List Name" />
+          <button class="add-list-button">Add New List</button>
         </form>
       </div>
     </template>

@@ -1,15 +1,23 @@
-import { ProjectStatus } from "../enums";
 import type { ProjectRules } from "../store/ProjectRules";
 import { projectState } from "../store/ProjectState";
+import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Project } from "./Project";
 
 interface IStatus {
-  status: "Active" | "Finished" | "Initial";
+  projects: ProjectRules[];
+  status: string;
+  listId: string;
 }
 export class ProjectList extends Base<HTMLDivElement> {
   private _listContainer: HTMLUListElement;
-  constructor({ status }: IStatus) {
+  private _editIcon: HTMLElement;
+  private _addIcon: HTMLElement;
+  private _closeIcon: HTMLElement;
+  private _deleteIcon: HTMLElement;
+  private _titleElement: HTMLHeadingElement;
+
+  constructor({ listId, status, projects }: IStatus) {
     super({
       elementId: "project-list",
       hostId: "app",
@@ -17,26 +25,60 @@ export class ProjectList extends Base<HTMLDivElement> {
       isBefore: true,
     });
     this._listContainer = this.element.querySelector("ul") as HTMLUListElement;
-
-    this._renderProjectList({ status });
-    if (localStorage.getItem("projects")!) {
-      const projects = JSON.parse(localStorage.getItem("projects")!);
-      const filteredProjects = this._filterProjectsByStatus(status, projects);
-      this._renderProjects(filteredProjects);
-    }
-
-    projectState.addListener((projects: ProjectRules[]) => {
-      const filteredProjects = this._filterProjectsByStatus(status, projects);
-      this._renderProjects(filteredProjects);
+    this._editIcon = this.element.querySelector(".edit-icon") as HTMLElement;
+    this._editIcon.addEventListener("click", () => {
+      this._updateListTitle(this._listContainer.id);
     });
+    this._addIcon = this.element.querySelector(".add-list-icon") as HTMLElement;
+    this._closeIcon = this.element.querySelector(".close-list-icon") as HTMLElement;
+    this._deleteIcon = this.element.querySelector(".delete-list-icon") as HTMLElement;
+    this._deleteIcon.addEventListener("click", () => {
+      const confirmDelete = confirm("Are you sure you want to delete this list?");
+      if (confirmDelete) {
+        addListInstance.deleteList(this._listContainer.id);
+      }
+    });
+    this._titleElement = this.element.querySelector("h2") as HTMLHeadingElement;
+    this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
+    this._renderProjectList({ listId, status, projects });
     this._runDragging();
   }
 
-  private _renderProjectList({ status }: IStatus) {
+  private _updateListTitle(id: string) {
+    this._titleElement.contentEditable = "true";
+    this._titleElement.focus();
+    this._editIcon.style.display = "none";
+    this._addIcon.style.display = "block";
+    this._closeIcon.style.display = "block";
+    this._deleteIcon.style.display = "block";
+    this._addIcon.addEventListener("click", () => {
+      this._handleUpdateListTitle(id);
+    });
+  }
+
+  private _handleUpdateListTitle(id: string) {
+    const newTitle = this._titleElement.textContent!.trim();
+    this._titleElement.contentEditable = "false";
+    this._editIcon.style.display = "block";
+    this._addIcon.style.display = "none";
+    this._closeIcon.style.display = "none";
+    this._deleteIcon.style.display = "none";
+    addListInstance.updateListTitle(id, newTitle);
+  }
+
+  private _canceledUpdateListTitle() {
+    this._titleElement.contentEditable = "false";
+    this._editIcon.style.display = "block";
+    this._addIcon.style.display = "none";
+    this._closeIcon.style.display = "none";
+    this._deleteIcon.style.display = "none";
+  }
+  private _renderProjectList({ listId, status, projects }: IStatus) {
     const title = this.element.querySelector(".list-header") as HTMLHeadingElement;
 
-    title.textContent = `${status} Projects`.toUpperCase();
-    this._listContainer.id = `${status}-projects`;
+    title.textContent = `${status}`.toUpperCase();
+    this._listContainer.id = `${listId}`;
+    this._renderProjects(projects);
   }
 
   // We need to render projects based on their status
@@ -45,22 +87,6 @@ export class ProjectList extends Base<HTMLDivElement> {
     for (const project of projects) {
       new Project(project, this._listContainer.id);
     }
-  }
-  private _filterProjectsByStatus(
-    status: "Initial" | "Active" | "Finished",
-    projects: ProjectRules[]
-  ) {
-    const filteredProjects = projects.filter((project) => {
-      if (status === "Initial") {
-        return project.status === ProjectStatus.Initial;
-      } else if (status === "Active") {
-        return project.status === ProjectStatus.Active;
-      } else if (status === "Finished") {
-        return project.status === ProjectStatus.Finished;
-      }
-    });
-
-    return filteredProjects;
   }
 
   private _runDragging() {
@@ -83,17 +109,9 @@ export class ProjectList extends Base<HTMLDivElement> {
 
   private _handleDrop(event: DragEvent) {
     event.preventDefault();
-    // This function make two things:
-    // 1. Get the project id from the drag event
-    // 2. Update the project status based on the drop target [this function will take the id and the chosen status]
     const projectId = event.dataTransfer!.getData("text/plain");
-    const newStatus =
-      this._listContainer.id.toLocaleLowerCase() === "active-projects".toLocaleLowerCase()
-        ? ProjectStatus.Active
-        : this._listContainer.id.toLocaleLowerCase() === "finished-projects".toLocaleLowerCase()
-        ? ProjectStatus.Finished
-        : ProjectStatus.Initial;
-    projectState.moveProject(projectId, newStatus);
+
+    projectState.moveProject(projectId, this._listContainer.id);
     this._handleDragLeave(event);
   }
 }

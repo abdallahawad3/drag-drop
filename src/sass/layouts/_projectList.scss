@@ -1,9 +1,25 @@
 .project-container {
-  .list-header {
+  .list-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: #01295c;
-    padding: 10px;
+    gap: 10px;
+    padding: 20px;
+    i {
+      cursor: pointer;
+      color: #fff;
+      font-size: 20px;
+      &:hover {
+        color: #ffcc00;
+      }
+    }
+    .add-list-icon,
+    .delete-list-icon,
+    .close-list-icon {
+      display: none;
+    }
   }
-
   .project-list {
     border: 2px solid #fff;
     border-radius: 2px;

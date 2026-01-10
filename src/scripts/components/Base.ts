@@ -11,10 +11,8 @@ export class Base<T extends HTMLElement> {
   public element: T;
 
   constructor({ elementId, hostId, isBefore, templateId }: IBaseProps) {
-    this._template = document.querySelector(
-      `.${templateId}`
-    ) as HTMLTemplateElement;
-    this._host = document.querySelector(`#${hostId}`) as HTMLDivElement;
+    this._template = document.querySelector(`.${templateId}`) as HTMLTemplateElement;
+    this._host = document.getElementById(`${hostId}`) as HTMLDivElement;
     const templateContent = document.importNode(this._template.content, true);
     this._adjustElementInHost;
     this.element = templateContent.firstElementChild as T;

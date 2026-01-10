@@ -1,22 +1,26 @@
 import { projectState } from "../store/ProjectState";
 import type { InputsType } from "../types";
 import { validationInput } from "../utils/validation_helpers";
+import { addListInstance } from "./AddList";
+
+// import { AddList } from "./AddListTitle";
 import { Popup } from "./Popup";
 
 export class Fields {
   private _host: HTMLDivElement;
   private _template: HTMLTemplateElement;
+  private _listSelect: HTMLSelectElement;
   public element: HTMLFormElement;
+
   constructor() {
     this._host = document.querySelector("#app") as HTMLDivElement;
-    this._template = document.querySelector(
-      ".form-template"
-    ) as HTMLTemplateElement;
+    this._template = document.querySelector(".form-template") as HTMLTemplateElement;
     const content = document.importNode(this._template.content, true);
     this.element = content.firstElementChild as HTMLFormElement;
     this._host.insertAdjacentElement("afterbegin", this.element);
-
+    this._listSelect = this.element.querySelector("#list") as HTMLSelectElement;
     this.element.addEventListener("submit", this._handelAddProject.bind(this));
+    this._renderSelectItems();
   }
 
   private _handelAddProject(e: Event) {
@@ -25,6 +29,7 @@ export class Fields {
     const descInput = this._getTargetInput("description");
     const titleValue = this._getInputValue(titleInput);
     const descValue = this._getInputValue(descInput);
+    const listValue = this._listSelect.value;
 
     const titleValidation = validationInput({
       maxLength: 20,
@@ -51,7 +56,7 @@ export class Fields {
       return;
     }
 
-    projectState.createProject(titleValue, descValue);
+    projectState.createProject(titleValue, descValue, listValue);
     titleInput.value = "";
     descInput.value = "";
   }
@@ -64,9 +69,7 @@ export class Fields {
    * @returns The HTMLInputElement corresponding to the specified input ID.
    */
   private _getTargetInput(inputId: InputsType): HTMLInputElement {
-    const input = this.element.querySelector(
-      `#${inputId}`
-    )! as HTMLInputElement;
+    const input = this.element.querySelector(`#${inputId}`)! as HTMLInputElement;
     return input;
   }
 
@@ -79,5 +82,15 @@ export class Fields {
   private _getInputValue(input: HTMLInputElement): string {
     const inputValue = input.value;
     return inputValue;
+  }
+
+  private _renderSelectItems() {
+    const lists = addListInstance.lists;
+    for (const list of lists) {
+      const option = document.createElement("option");
+      option.value = list.id;
+      option.textContent = list.name;
+      this._listSelect.appendChild(option);
+    }
   }
 }
