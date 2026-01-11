@@ -51,7 +51,7 @@ export class Project extends Base<HTMLDivElement> {
       true,
       (confirm: boolean) => {
         if (confirm) {
-          addListInstance.deleteProjectFromList(this._projectListId, this._project.id);
+          addListInstance().deleteProjectFromList(this._projectListId, this._project.id);
         }
       }
     );

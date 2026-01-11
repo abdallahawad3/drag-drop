@@ -2,8 +2,8 @@ import type { ProjectRules } from "../store/ProjectRules";
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
 export class AddList extends Base<HTMLDivElement> {
-  private _form: HTMLFormElement;
-  private _input: HTMLInputElement;
+  private _form!: HTMLFormElement;
+  private _input!: HTMLInputElement;
   private _lists: { id: string; name: string; projects: ProjectRules[] }[] = localStorage.getItem(
     "projectLists"
   )
