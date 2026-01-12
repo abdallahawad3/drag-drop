@@ -26,20 +26,16 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._closeIcon = this.element.querySelector(".close-list-icon") as HTMLElement;
     this._deleteIcon = this.element.querySelector(".delete-list-icon") as HTMLElement;
 
-    // Set initial ID
     this._listContainer.id = listId;
 
-    // Initial render using current store data
     const currentList = addListInstance.lists.find((l) => l.id === listId);
     if (currentList) {
       this._titleElement.textContent = currentList.name;
-      // If you still want status in header:
       const header = this.element.querySelector(".list-header") as HTMLElement;
       if (header) header.textContent = status.toUpperCase(); // or currentList.name.toUpperCase()
       this._renderProjects(currentList.projects);
     }
 
-    // Setup listeners & events
     this._setupEventListeners(listId);
     this._runDragging();
 

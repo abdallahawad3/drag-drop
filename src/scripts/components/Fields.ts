@@ -56,6 +56,10 @@ export class Fields {
       return;
     }
 
+    if (listValue.length === 0) {
+      new Popup("Please select a valid list.", "List Selection Error");
+      return;
+    }
     addListInstance.addProject(titleValue, descValue, listValue);
     titleInput.value = "";
     descInput.value = "";
