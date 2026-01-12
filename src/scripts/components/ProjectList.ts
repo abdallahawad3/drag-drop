@@ -1,14 +1,9 @@
 import type { ProjectRules } from "../store/ProjectRules";
 import { projectState } from "../store/ProjectState";
-import { AddList, addListInstance } from "./AddList";
+import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Project } from "./Project";
 
-interface IStatus {
-  projects: ProjectRules[];
-  status: string;
-  listId: string;
-}
 export class ProjectList extends Base<HTMLDivElement> {
   private _listContainer: HTMLUListElement;
   private _editIcon: HTMLElement;
@@ -100,12 +95,6 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._addIcon.style.display = "none";
     this._closeIcon.style.display = "none";
     this._deleteIcon.style.display = "none";
-  }
-  private _renderProjectList({ listId, status, projects }: IStatus) {
-    const title = this.element.querySelector(".list-header") as HTMLHeadingElement;
-    title.textContent = `${status}`.toUpperCase();
-    this._listContainer.id = `${listId}`;
-    this._renderProjects(projects);
   }
 
   // We need to render projects based on their status
