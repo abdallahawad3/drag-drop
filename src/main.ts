@@ -10,6 +10,7 @@ import { Fields } from "./scripts/components/Fields";
 import { ProjectList } from "./scripts/components/ProjectList";
 import { loginComponent } from "./scripts/components/Login";
 import { addListInstance } from "./scripts/components/AddList";
+import type { ProjectRules } from "./scripts/store/ProjectRules";
 
 function checkLogin() {
   const login = localStorage.getItem("isLoggedIn")
@@ -27,8 +28,8 @@ function checkLogin() {
   new Fields();
   addList.style.display = "block";
 
-  const lists = addListInstance.lists;
-  lists.forEach((list) => {
+  const lists = addListInstance.lists as { id: string; name: string; projects: ProjectRules[] }[];
+  lists.forEach((list: { id: string; name: string; projects: ProjectRules[] }) => {
     new ProjectList({ listId: list.id, status: list.name, projects: list.projects });
   });
 }

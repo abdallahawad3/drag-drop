@@ -11,7 +11,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _closeIcon: HTMLElement;
   private _deleteIcon: HTMLElement;
   private _titleElement: HTMLHeadingElement;
-  constructor({ listId, status }: { listId: string; status: string }) {
+  constructor({ listId, status }: { listId: string; status: string; projects: ProjectRules[] }) {
     super({
       elementId: "project-list",
       hostId: "app",
@@ -32,7 +32,7 @@ export class ProjectList extends Base<HTMLDivElement> {
     if (currentList) {
       this._titleElement.textContent = currentList.name;
       const header = this.element.querySelector(".list-header") as HTMLElement;
-      if (header) header.textContent = status.toUpperCase(); // or currentList.name.toUpperCase()
+      if (header) header.textContent = status.toUpperCase();
       this._renderProjects(currentList.projects);
     }
 
