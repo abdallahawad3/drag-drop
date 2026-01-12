@@ -1,5 +1,4 @@
 import type { ProjectRules } from "../store/ProjectRules";
-import { projectState } from "../store/ProjectState";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Project } from "./Project";
@@ -122,8 +121,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _handleDrop(event: DragEvent) {
     event.preventDefault();
     const projectId = event.dataTransfer!.getData("text/plain");
-
-    projectState.moveProject(projectId, this._listContainer.id);
+    addListInstance.moveProject(projectId, this._listContainer.id);
     this._handleDragLeave(event);
   }
 }

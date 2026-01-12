@@ -155,6 +155,22 @@ export class AddList extends Base<HTMLDivElement> {
   public static pushListener(listenerFn: Function) {
     this.getInstance().addListener(listenerFn);
   }
+
+  moveProject(projectId: string, targetListId: string) {
+    let projectToMove: ProjectRules | null = null;
+    let oldListId: string | null = null;
+    for (const list of this._lists) {
+      const projIndex = list.projects.findIndex((proj) => proj.id === projectId);
+      if (projIndex > -1) {
+        projectToMove = list.projects[projIndex];
+        oldListId = list.id;
+        break;
+      }
+    }
+    if (projectToMove) {
+      this.updateProjectsInList(targetListId, projectToMove, oldListId!);
+    }
+  }
 }
 
 export const addListInstance = AddList.getInstance();
