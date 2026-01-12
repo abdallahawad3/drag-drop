@@ -43,7 +43,7 @@ class ProjectState {
     });
 
     this._projects.push(newProject);
-    addListInstance.addProjectToList(listId, newProject);
+    // addListInstance.addProjectToList(listId, newProject);
     localStorage.setItem("projects", JSON.stringify(this._projects));
     this._runListeners();
   }

@@ -1,4 +1,5 @@
-import type { ProjectRules } from "../store/ProjectRules";
+import { ProjectStatus } from "../enums";
+import { ProjectRules } from "../store/ProjectRules";
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
 export class AddList extends Base<HTMLDivElement> {
@@ -21,6 +22,7 @@ export class AddList extends Base<HTMLDivElement> {
     this._form = this.element.querySelector(".add-list-container") as HTMLFormElement;
     this._input = this.element.querySelector(".add-list-input") as HTMLInputElement;
     this._form.addEventListener("submit", this._submitHandler.bind(this));
+    this._notifyListeners();
   }
 
   public static getInstance() {
@@ -53,12 +55,25 @@ export class AddList extends Base<HTMLDivElement> {
     window.location.reload();
   }
 
+  public addProject(title: string, description: string, listId: string) {
+    const newProject = new ProjectRules({
+      id: uuid(),
+      title,
+      description,
+      status: ProjectStatus.Initial,
+      listId,
+    });
+
+    addListInstance.addProjectToList(listId, newProject);
+  }
+
   public addProjectToList(listId: string, project: ProjectRules) {
     const list = this._lists.find((lst) => lst.id === listId);
     if (list) {
       list.projects.push(project);
       this._saveListsToLocalStorage();
     }
+    this._notifyListeners();
   }
 
   public updateProjectsInList(targetListId: string, project: ProjectRules, oldListId?: string) {
@@ -72,7 +87,7 @@ export class AddList extends Base<HTMLDivElement> {
     if (!alreadyExists) {
       targetList.projects.push(project);
     }
-    window.location.reload();
+    this._notifyListeners();
     this._saveListsToLocalStorage();
   }
 
@@ -82,6 +97,7 @@ export class AddList extends Base<HTMLDivElement> {
       list.projects = list.projects.filter((proj) => proj.id !== projectId);
       this._saveListsToLocalStorage();
     }
+    this._notifyListeners();
   }
   public get lists() {
     return [...this._lists];
@@ -106,15 +122,14 @@ export class AddList extends Base<HTMLDivElement> {
       list.name = newTitle;
       this._saveListsToLocalStorage();
       this._notifyListeners();
-      window.location.reload();
     }
+    this._notifyListeners();
   }
 
   deleteList(listId: string) {
     this._lists = this._lists.filter((lst) => lst.id !== listId);
     this._saveListsToLocalStorage();
     this._notifyListeners();
-    window.location.reload();
   }
 
   editProjectsInList(listId: string, project: ProjectRules) {
@@ -125,14 +140,9 @@ export class AddList extends Base<HTMLDivElement> {
       this._saveListsToLocalStorage();
       this._notifyListeners();
     }
-
-    window.location.reload();
   }
 
   deleteProjectFromList(listId: string, projectId: string) {
-    console.log(listId);
-    console.log(projectId);
-
     const list = this._lists.find((lst) => lst.id === listId);
     if (list) {
       const newProjects = list.projects.filter((proj) => proj.id !== projectId);
@@ -140,7 +150,10 @@ export class AddList extends Base<HTMLDivElement> {
       this._saveListsToLocalStorage();
       this._notifyListeners();
     }
-    window.location.reload();
+  }
+
+  public static pushListener(listenerFn: Function) {
+    this.getInstance().addListener(listenerFn);
   }
 }
 

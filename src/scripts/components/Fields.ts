@@ -1,4 +1,4 @@
-import { projectState } from "../store/ProjectState";
+// import { projectState } from "../store/ProjectState";
 import type { InputsType } from "../types";
 import { validationInput } from "../utils/validation_helpers";
 import { addListInstance } from "./AddList";
@@ -56,7 +56,7 @@ export class Fields {
       return;
     }
 
-    projectState.createProject(titleValue, descValue, listValue);
+    addListInstance.addProject(titleValue, descValue, listValue);
     titleInput.value = "";
     descInput.value = "";
   }

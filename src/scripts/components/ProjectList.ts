@@ -1,6 +1,6 @@
 import type { ProjectRules } from "../store/ProjectRules";
 import { projectState } from "../store/ProjectState";
-import { addListInstance } from "./AddList";
+import { AddList, addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Project } from "./Project";
 
@@ -16,32 +16,60 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _closeIcon: HTMLElement;
   private _deleteIcon: HTMLElement;
   private _titleElement: HTMLHeadingElement;
-
-  constructor({ listId, status, projects }: IStatus) {
+  constructor({ listId, status }: { listId: string; status: string }) {
     super({
       elementId: "project-list",
       hostId: "app",
       templateId: "projects-template",
       isBefore: true,
     });
+
     this._listContainer = this.element.querySelector("ul") as HTMLUListElement;
+    this._titleElement = this.element.querySelector("h2") as HTMLHeadingElement;
     this._editIcon = this.element.querySelector(".edit-icon") as HTMLElement;
-    this._editIcon.addEventListener("click", () => {
-      this._updateListTitle(this._listContainer.id);
-    });
     this._addIcon = this.element.querySelector(".add-list-icon") as HTMLElement;
     this._closeIcon = this.element.querySelector(".close-list-icon") as HTMLElement;
     this._deleteIcon = this.element.querySelector(".delete-list-icon") as HTMLElement;
+
+    // Set initial ID
+    this._listContainer.id = listId;
+
+    // Initial render using current store data
+    const currentList = addListInstance.lists.find((l) => l.id === listId);
+    if (currentList) {
+      this._titleElement.textContent = currentList.name;
+      // If you still want status in header:
+      const header = this.element.querySelector(".list-header") as HTMLElement;
+      if (header) header.textContent = status.toUpperCase(); // or currentList.name.toUpperCase()
+      this._renderProjects(currentList.projects);
+    }
+
+    // Setup listeners & events
+    this._setupEventListeners(listId);
+    this._runDragging();
+
+    addListInstance.addListener(
+      (freshLists: { id: string; name: string; projects: ProjectRules[] }[]) => {
+        const updatedList = freshLists.find((l) => l.id === listId);
+        if (!updatedList) {
+          this.element.remove();
+          return;
+        }
+        this._titleElement.textContent = updatedList.name;
+        this._renderProjects(updatedList.projects);
+      }
+    );
+  }
+
+  private _setupEventListeners(listId: string) {
+    this._editIcon.addEventListener("click", () => this._updateListTitle(listId));
     this._deleteIcon.addEventListener("click", () => {
-      const confirmDelete = confirm("Are you sure you want to delete this list?");
-      if (confirmDelete) {
-        addListInstance.deleteList(this._listContainer.id);
+      if (confirm("Are you sure you want to delete this list?")) {
+        addListInstance.deleteList(listId);
       }
     });
-    this._titleElement = this.element.querySelector("h2") as HTMLHeadingElement;
     this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
-    this._renderProjectList({ listId, status, projects });
-    this._runDragging();
+    this._addIcon.addEventListener("click", () => this._handleUpdateListTitle(listId));
   }
 
   private _updateListTitle(id: string) {
@@ -75,7 +103,6 @@ export class ProjectList extends Base<HTMLDivElement> {
   }
   private _renderProjectList({ listId, status, projects }: IStatus) {
     const title = this.element.querySelector(".list-header") as HTMLHeadingElement;
-
     title.textContent = `${status}`.toUpperCase();
     this._listContainer.id = `${listId}`;
     this._renderProjects(projects);
