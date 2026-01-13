@@ -1,6 +1,5 @@
 .popup-container.visible {
-  position: absolute;
-  z-index: 1000;
+  position: fixed;
   inset: 0;
   max-width: 500px;
   display: block;
@@ -12,6 +11,7 @@
   border-radius: 5px;
   background-color: #16214d;
   animation: flowUp 0.3s linear forwards;
+  z-index: 1001;
   .header {
     display: flex;
     align-items: center;
@@ -61,14 +61,14 @@
 
 #overlay.visible {
   visibility: visible;
-  position: absolute;
+  position: fixed;
   background-color: rgba(0, 0, 0, 0.5); /* slight dark tint optional */
-  z-index: 999;
+  z-index: 1;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   inset: 0;
   top: 0;
   left: 0;
-  width: 100dvw;
-  height: 100dvh;
+  width: 100vw;
+  height: 100vh;
 }
