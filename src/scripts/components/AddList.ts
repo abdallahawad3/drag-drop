@@ -1,5 +1,6 @@
 import { ProjectStatus } from "../enums";
 import { ProjectRules } from "../store/ProjectRules";
+import { createErrorMessage, validationInput } from "../utils/validation_helpers";
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
 export class AddList extends Base<HTMLDivElement> {
@@ -17,11 +18,12 @@ export class AddList extends Base<HTMLDivElement> {
       elementId: "add-list",
       hostId: "app",
       templateId: "add-list",
-      isBefore: false,
+      isBefore: true,
     });
     this._form = this.element.querySelector(".add-list-container") as HTMLFormElement;
     this._input = this.element.querySelector(".add-list-input") as HTMLInputElement;
     this._form.addEventListener("submit", this._submitHandler.bind(this));
+    this._initializeLists();
     this._notifyListeners();
   }
 
@@ -32,11 +34,33 @@ export class AddList extends Base<HTMLDivElement> {
     }
     return this._instance;
   }
+
+  private _initializeLists() {
+    if (this._lists.length === 0) {
+      this._lists = [
+        { id: uuid(), name: "Initial", projects: [] },
+        { id: uuid(), name: "Active", projects: [] },
+        { id: uuid(), name: "Finished", projects: [] },
+      ];
+      this._saveListsToLocalStorage();
+    }
+  }
   private _submitHandler(event: Event) {
     event.preventDefault();
     const enteredTitle = this._input.value.trim();
-    if (enteredTitle.length === 0) {
-      alert("Please enter a valid list name.");
+    const validationMessage = validationInput({
+      target: "list title",
+      value: enteredTitle,
+      required: true,
+      minLength: 3,
+      maxLength: 15,
+    });
+
+    if (validationMessage.length > 0) {
+      createErrorMessage({
+        input: this._input,
+        message: validationMessage,
+      });
       return;
     }
     const obj = {

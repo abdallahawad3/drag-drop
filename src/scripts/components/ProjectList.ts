@@ -1,6 +1,7 @@
 import type { ProjectRules } from "../store/ProjectRules";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
+import { Popup } from "./Popup";
 import { Project } from "./Project";
 
 export class ProjectList extends Base<HTMLDivElement> {
@@ -13,7 +14,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   constructor({ listId, status }: { listId: string; status: string; projects: ProjectRules[] }) {
     super({
       elementId: "project-list",
-      hostId: "app",
+      hostId: "content",
       templateId: "projects-template",
       isBefore: true,
     });
@@ -54,9 +55,22 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _setupEventListeners(listId: string) {
     this._editIcon.addEventListener("click", () => this._updateListTitle(listId));
     this._deleteIcon.addEventListener("click", () => {
-      if (confirm("Are you sure you want to delete this list?")) {
-        addListInstance.deleteList(listId);
+      if (addListInstance.lists.length <= 1) {
+        new Popup("At least one list must exist.", "Cannot Delete List");
+        return;
       }
+
+      new Popup(
+        "Are you sure you want to delete this list? All projects in this list will be lost.",
+        "Delete List",
+        true,
+        (confirm: boolean) => {
+          if (confirm) {
+            addListInstance.deleteList(listId);
+            this.element.remove();
+          }
+        }
+      );
     });
     this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
     this._addIcon.addEventListener("click", () => this._handleUpdateListTitle(listId));

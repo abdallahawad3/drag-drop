@@ -1,10 +1,10 @@
-// import { projectState } from "../store/ProjectState";
 import type { InputsType } from "../types";
-import { validationInput } from "../utils/validation_helpers";
+import {
+  clearErrorMessages,
+  createErrorMessage,
+  validationInput,
+} from "../utils/validation_helpers";
 import { addListInstance } from "./AddList";
-
-// import { AddList } from "./AddListTitle";
-import { Popup } from "./Popup";
 
 export class Fields {
   private _host: HTMLDivElement;
@@ -40,9 +40,14 @@ export class Fields {
     });
 
     if (titleValidation.length > 0) {
-      new Popup(titleValidation, "Title Error");
+      createErrorMessage({
+        input: titleInput,
+        message: titleValidation,
+      });
       return;
     }
+
+    clearErrorMessages({ input: titleInput });
     const descValidation = validationInput({
       minLength: 5,
       maxLength: 20,
@@ -52,12 +57,20 @@ export class Fields {
     });
 
     if (descValidation.length > 0) {
-      new Popup(descValidation, "Description Error");
+      createErrorMessage({
+        input: descInput,
+        message: descValidation,
+      });
+
       return;
     }
+    clearErrorMessages({ input: descInput });
 
     if (listValue.length === 0) {
-      new Popup("Please select a valid list.", "List Selection Error");
+      createErrorMessage({
+        input: this._listSelect,
+        message: "Please select a list for the project.",
+      });
       return;
     }
     addListInstance.addProject(titleValue, descValue, listValue);

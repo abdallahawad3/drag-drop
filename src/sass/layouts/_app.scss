@@ -4,9 +4,39 @@
   display: flex;
   justify-content: space-between;
   padding: 15px 50px;
-  background-image: url("../../../public/assets/img/1.webp");
-  background-repeat: no-repeat;
-  background-size: cover;
   color: #fff;
   font-family: sans-serif;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-image: url("../../../public/assets/img/1.webp");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed; /* optional */
+}
+
+#project-list {
+  border: 2px solid rgba(0, 0, 0, 0.9);
+  width: 30%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#content {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+  margin-left: 20px;
+}
+
+#content div {
+  min-width: 300px;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
