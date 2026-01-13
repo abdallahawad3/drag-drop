@@ -1,18 +1,19 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   clearErrorMessages,
   createErrorMessage,
   validationInput,
 } from "../utils/validation_helpers";
 import { Base } from "./Base";
+import { Register } from "./Register";
+import { auth } from "../services/firebase";
 
 export class Login extends Base<HTMLDivElement> {
-  private static _instance: Login;
-  private _usernameInput!: HTMLInputElement;
+  private _emailInput!: HTMLInputElement;
   private _passwordInput!: HTMLInputElement;
   private _loginButton!: HTMLButtonElement;
-  public isLoggedIn: boolean = localStorage.getItem("isLoggedIn")
-    ? JSON.parse(localStorage.getItem("isLoggedIn")!)
-    : false;
+  private _showRegisterFormButton!: HTMLButtonElement;
+  private _registerForm!: HTMLFormElement;
   constructor() {
     super({
       elementId: "login-form",
@@ -21,40 +22,36 @@ export class Login extends Base<HTMLDivElement> {
       isBefore: true,
     });
     this.element.classList.add("visible");
-    this._usernameInput = this.element.querySelector("#username") as HTMLInputElement;
+    this._emailInput = this.element.querySelector("#email") as HTMLInputElement;
+    this._registerForm = this.element.querySelector(".login-form") as HTMLFormElement;
     this._passwordInput = this.element.querySelector("#password") as HTMLInputElement;
     this._loginButton = this.element.querySelector("button") as HTMLButtonElement;
     this._loginButton.addEventListener("click", this._handleLogin.bind(this));
-    this.isLogin();
-  }
-
-  public static getInstance(): Login {
-    if (!this._instance) {
-      this._instance = new Login();
-    }
-    return this._instance;
+    this._showRegisterFormButton = this.element.querySelector(
+      ".register-link"
+    ) as HTMLButtonElement;
+    this._showRegisterFormButton.addEventListener("click", this._showRegisterForm.bind(this));
+    this.element.addEventListener("submit", this._handleLogin.bind(this));
   }
 
   private _handleLogin = (event: Event) => {
     event.preventDefault();
-    const username = this._usernameInput.value;
+    const email = this._emailInput.value;
     const password = this._passwordInput.value;
-    const usernameValid = validationInput({
-      value: username,
+    const emailValid = validationInput({
+      value: email,
       required: true,
-      minLength: 3,
-      maxLength: 15,
-      target: "Username",
+      target: "Email",
     });
 
-    if (usernameValid.length > 0) {
+    if (emailValid.length > 0) {
       createErrorMessage({
-        input: this._usernameInput,
-        message: usernameValid,
+        input: this._emailInput,
+        message: emailValid,
       });
       return;
     }
-    clearErrorMessages({ input: this._usernameInput });
+    clearErrorMessages({ input: this._emailInput });
 
     const passwordValid = validationInput({
       value: password,
@@ -71,9 +68,8 @@ export class Login extends Base<HTMLDivElement> {
       });
       return;
     }
+    this._loginUser(email, password);
     clearErrorMessages({ input: this._passwordInput });
-
-    this._loginUser();
     this._closeLogin();
   };
 
@@ -81,18 +77,24 @@ export class Login extends Base<HTMLDivElement> {
     this.element.classList.remove("visible");
   };
 
-  private _loginUser() {
-    this.isLoggedIn = true;
-    localStorage.setItem("isLoggedIn", JSON.stringify(this.isLoggedIn));
-    window.location.reload();
-  }
-
-  public isLogin(): boolean {
-    if (this.isLoggedIn) {
-      this._closeLogin();
+  private async _loginUser(email: string, password: string) {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in:", result.user);
+      return result.user;
+    } catch (err) {
+      createErrorMessage({
+        input: this._registerForm,
+        message: "Invalid email or password.",
+        showBorder: false,
+        isBefore: true,
+        showStyle: true,
+      });
     }
-    return this.isLoggedIn;
   }
-}
 
-export const loginComponent = Login.getInstance();
+  private _showRegisterForm = () => {
+    this.element.remove();
+    new Register();
+  };
+}

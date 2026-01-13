@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
   width: 100%;
   max-width: 400px;
   margin: 50px auto;
@@ -12,7 +12,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   color: #000;
-  .login-header {
+  .register-header {
     text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
@@ -50,7 +50,7 @@
     }
   }
 
-  .login-footer {
+  .register-footer {
     text-align: center;
     margin-top: 20px;
     font-size: 14px;

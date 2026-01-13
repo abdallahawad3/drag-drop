@@ -9,25 +9,55 @@ export const validationInput = ({
 }: ADD_PROJECT_VALIDATION) => {
   if (required && value.trim().length === 0) {
     return `The ${target.toUpperCase()} value is required.`;
-  } else if (required && value.trim().length < minLength) {
+  } else if (minLength && value.trim().length < minLength) {
     return `The ${target.toUpperCase()} value must be at least ${minLength} characters long.`;
-  } else if (required && value.trim().length > maxLength) {
+  } else if (maxLength && value.trim().length > maxLength) {
     return `The ${target.toUpperCase()} value must be at max ${maxLength} characters long.`;
   } else {
     return "";
   }
 };
 
-export const createErrorMessage = ({ input, message }: { input: HTMLElement; message: string }) => {
+export const createErrorMessage = ({
+  input,
+  message,
+  showBorder = true,
+  isBefore = false,
+  showStyle = false,
+}: {
+  input: HTMLElement;
+  message: string;
+  showBorder?: boolean;
+  isBefore?: boolean;
+  showStyle?: boolean;
+}) => {
   let oldTitleError = input.parentElement?.querySelector(".error-message");
   if (oldTitleError) {
     oldTitleError.remove();
   }
-  input.style.border = "2px solid red";
+  if (showBorder) {
+    input.style.border = "2px solid red";
+  }
   const p = document.createElement("p");
   p.className = "error-message";
   p.textContent = message;
-  input.insertAdjacentElement("afterend", p);
+  if (showStyle) {
+    p.style.color = "red";
+    p.style.fontSize = "0.9rem";
+    p.style.marginTop = "4px";
+    p.style.fontWeight = "500";
+    p.style.fontFamily = "Arial, sans-serif";
+    p.style.backgroundColor = "#ffe6e6";
+    p.style.padding = "6px 10px";
+    p.style.borderRadius = "4px";
+    p.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+    p.style.marginBottom = "8px";
+  }
+  if (isBefore) {
+    input.insertAdjacentElement("beforebegin", p);
+  } else {
+    input.insertAdjacentElement("afterend", p);
+  }
 };
 
 export const clearErrorMessages = ({ input }: { input: HTMLInputElement }) => {
