@@ -1,6 +1,9 @@
-import { validationInput } from "../utils/validation_helpers";
+import {
+  clearErrorMessages,
+  createErrorMessage,
+  validationInput,
+} from "../utils/validation_helpers";
 import { Base } from "./Base";
-import { Popup } from "./Popup";
 
 export class Login extends Base<HTMLDivElement> {
   private static _instance: Login;
@@ -45,9 +48,14 @@ export class Login extends Base<HTMLDivElement> {
     });
 
     if (usernameValid.length > 0) {
-      new Popup(usernameValid, "Username Error");
+      createErrorMessage({
+        input: this._usernameInput,
+        message: usernameValid,
+      });
       return;
     }
+    clearErrorMessages({ input: this._usernameInput });
+
     const passwordValid = validationInput({
       value: password,
       required: true,
@@ -57,9 +65,13 @@ export class Login extends Base<HTMLDivElement> {
     });
 
     if (passwordValid.length > 0) {
-      new Popup(passwordValid, "Password Error");
+      createErrorMessage({
+        input: this._passwordInput,
+        message: passwordValid,
+      });
       return;
     }
+    clearErrorMessages({ input: this._passwordInput });
 
     this._loginUser();
     this._closeLogin();
