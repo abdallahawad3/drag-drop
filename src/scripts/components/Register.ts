@@ -1,4 +1,4 @@
-import { DotLottie } from "@lottiefiles/dotlottie-web";
+const { DotLottie } = await import("@lottiefiles/dotlottie-web");
 import { auth } from "../services/firebase";
 import {
   clearErrorMessages,
@@ -27,13 +27,13 @@ export class Register extends Base<HTMLDivElement> {
       autoplay: true,
       loop: true,
       canvas: document.querySelector("#dotlottie-canvas")! as HTMLCanvasElement,
-      src: "../../../public/assets/img/Sign up.lottie", // replace with your .lottie or .json file URL
+      src: "../../../assets/img/Sign up.lottie", // replace with your .lottie or .json file URL
     });
     new DotLottie({
       autoplay: true,
       loop: true,
       canvas: document.querySelector("#register-lottie")! as HTMLCanvasElement,
-      src: "../../../public/assets/img/Registered.lottie", // replace with your .lottie or .json file URL
+      src: "../../../assets/img/Registered.lottie", // replace with your .lottie or .json file URL
     });
     this._showConfirmPasswordButton = this.element.querySelector(
       "#confirm-password+i"

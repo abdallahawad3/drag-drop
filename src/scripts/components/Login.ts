@@ -7,7 +7,7 @@ import {
 import { Base } from "./Base";
 import { Register } from "./Register";
 import { auth } from "../services/firebase";
-import { DotLottie } from "@lottiefiles/dotlottie-web";
+const { DotLottie } = await import("@lottiefiles/dotlottie-web");
 
 export class Login extends Base<HTMLDivElement> {
   private _emailInput!: HTMLInputElement;
@@ -26,14 +26,14 @@ export class Login extends Base<HTMLDivElement> {
       autoplay: true,
       loop: true,
       canvas: document.querySelector("#login-lottie")! as HTMLCanvasElement,
-      src: "../../../public/assets/img/register.lottie", // replace with your .lottie or .json file URL
+      src: "../../../assets/img/register.lottie", // replace with your .lottie or .json file URL
     });
 
     new DotLottie({
       autoplay: true,
       loop: true,
       canvas: document.querySelector("#login-icon")! as HTMLCanvasElement,
-      src: "../../../public/assets/img/Registered.lottie", // replace with your .lottie or .json file URL
+      src: "../../../assets/img/Registered.lottie", // replace with your .lottie or .json file URL
     });
     this.element.classList.add("visible");
     this._emailInput = this.element.querySelector("#email") as HTMLInputElement;
