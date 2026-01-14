@@ -1,7 +1,9 @@
 #add-list {
   width: 350px;
   padding: 20px;
-  background-color: #000;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
   border-radius: 5px;
   form {
