@@ -83,26 +83,55 @@
     </template>
     <template class="register-template">
       <div class="register-container">
-        <div class="register-header">
-          <h2>Register</h2>
+        <div class="welcome-section">
+          <h1 class="animate__animated animate__rubberBand">Welcome to Darg And Drop</h1>
+          <p class="animate__animated animate__fadeIn animate__delay-.7s">
+            Create your account to get started!
+          </p>
         </div>
-        <form class="register-form">
-          <div class="form-control">
-            <label for="username">Username</label>
-            <input type="text" id="username" />
+        <div class="">
+          <div class="icon">
+            <canvas id="dotlottie-canvas" style="width: 600px; height: 600px"></canvas>
           </div>
-          <div class="form-control">
-            <label for="email">Email</label>
-            <input type="email" id="email" />
+        </div>
+        <div class="register-form">
+          <div class="register-header">
+            <h2>
+              Create an new account
+              <canvas id="register-lottie" style="width: 50px; height: 50px"></canvas>
+            </h2>
+            <p style="text-align: center; font-size: 16px; color: #858282">
+              Join us and start organizing your projects today!
+            </p>
           </div>
-          <div class="form-control">
-            <label for="password">Password</label>
-            <input type="password" id="password" />
+          <form class="register-form">
+            <div class="form-control">
+              <label for="username">Username</label>
+              <input type="text" id="username" />
+            </div>
+            <div class="form-control">
+              <label for="email">Email</label>
+              <input type="email" id="email" />
+            </div>
+            <div class="form-control">
+              <label for="password">Password</label>
+              <div class="password-wrapper">
+                <input type="password" id="password" />
+                <i class="show-password bx bx-eye-slash"></i>
+              </div>
+            </div>
+            <div class="form-control">
+              <label for="confirm-password">Confirm Password</label>
+              <div class="password-wrapper" id="confirm-password">
+                <input type="password" id="confirm-password" />
+                <i class="show-password bx bx-eye-slash"></i>
+              </div>
+            </div>
+            <button type="submit">Register</button>
+          </form>
+          <div class="register-footer">
+            <p>Already have an account? <span class="login-link">Login</span></p>
           </div>
-          <button type="submit">Register</button>
-        </form>
-        <div class="register-footer">
-          <p>Already have an account? <span class="login-link">Login</span></p>
         </div>
       </div>
     </template>
@@ -137,6 +166,7 @@
 
     <div id="overlay" class=""></div>
     <div id="app">
+      <div id="management"></div>
       <div id="content"></div>
     </div>
   </body>

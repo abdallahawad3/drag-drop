@@ -13,7 +13,7 @@ export class Fields {
   public element: HTMLFormElement;
 
   constructor() {
-    this._host = document.querySelector("#app") as HTMLDivElement;
+    this._host = document.querySelector("#management") as HTMLDivElement;
     this._template = document.querySelector(".form-template") as HTMLTemplateElement;
     const content = document.importNode(this._template.content, true);
     this.element = content.firstElementChild as HTMLFormElement;

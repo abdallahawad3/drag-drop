@@ -1,3 +1,4 @@
+import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { auth } from "../services/firebase";
 import {
   clearErrorMessages,
@@ -13,6 +14,8 @@ export class Register extends Base<HTMLDivElement> {
   private _passwordInput!: HTMLInputElement;
   private _usernameInput!: HTMLInputElement;
   private _showLoginFormButton!: HTMLButtonElement;
+  private _showPasswordButton!: HTMLButtonElement;
+  private _showConfirmPasswordButton!: HTMLButtonElement;
   constructor() {
     super({
       elementId: "register-form",
@@ -20,7 +23,22 @@ export class Register extends Base<HTMLDivElement> {
       templateId: "register-template",
       isBefore: false,
     });
-
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.querySelector("#dotlottie-canvas")!,
+      src: "../../../public/assets/img/Sign up.lottie", // replace with your .lottie or .json file URL
+    });
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.querySelector("#register-lottie")!,
+      src: "../../../public/assets/img/Registered.lottie", // replace with your .lottie or .json file URL
+    });
+    this._showConfirmPasswordButton = this.element.querySelector(
+      "#confirm-password+i"
+    ) as HTMLButtonElement;
+    this._showPasswordButton = this.element.querySelector("#password+i") as HTMLButtonElement;
     this._registerForm = this.element.querySelector(".register-form") as HTMLFormElement;
     this._usernameInput = this.element.querySelector("#username") as HTMLInputElement;
     this._emailInput = this.element.querySelector("#email") as HTMLInputElement;
@@ -31,8 +49,29 @@ export class Register extends Base<HTMLDivElement> {
       this.element.remove();
       new Login();
     });
+
+    this._showPasswordButton.addEventListener("click", () => {
+      this._togglePasswordVisibility(this._passwordInput, this._showPasswordButton);
+    });
+    this._showConfirmPasswordButton.addEventListener("click", () => {
+      const confirmPasswordInput = this.element.querySelector(
+        "input#confirm-password"
+      ) as HTMLInputElement;
+      this._togglePasswordVisibility(confirmPasswordInput, this._showConfirmPasswordButton);
+    });
   }
 
+  private _togglePasswordVisibility(input: HTMLInputElement, button: HTMLButtonElement) {
+    if (input.type === "password" && input.value.length > 0) {
+      button.classList.add("bx-eye");
+      button.classList.remove("bx-eye-slash");
+      input.type = "text";
+    } else {
+      button.classList.remove("bx-eye");
+      button.classList.add("bx-eye-slash");
+      input.type = "password";
+    }
+  }
   private _handelRegister = (e: Event) => {
     e.preventDefault();
     const usernameValidation = validationInput({
@@ -68,11 +107,25 @@ export class Register extends Base<HTMLDivElement> {
       minLength: 6,
       target: "Password",
     });
+
     if (passwordValidation.length > 0) {
       createErrorMessage({ input: this._passwordInput, message: passwordValidation });
       return;
     }
     clearErrorMessages({ input: this._passwordInput });
+
+    const confirmPasswordInput = this.element.querySelector(
+      "input#confirm-password"
+    ) as HTMLInputElement;
+
+    if (this._passwordInput.value !== confirmPasswordInput.value) {
+      createErrorMessage({
+        input: confirmPasswordInput,
+        message: "Passwords do not match.",
+      });
+      return;
+    }
+    clearErrorMessages({ input: confirmPasswordInput });
     this._registerUser(this._emailInput.value, this._passwordInput.value);
   };
 

@@ -16,7 +16,7 @@ export class AddList extends Base<HTMLDivElement> {
   constructor() {
     super({
       elementId: "add-list",
-      hostId: "app",
+      hostId: "management",
       templateId: "add-list",
       isBefore: true,
     });

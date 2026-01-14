@@ -8,7 +8,7 @@ import "./sass/layouts/_login.scss";
 import "./sass/layouts/_register.scss";
 import "./sass/layouts/_addList.scss";
 import "./sass/layouts/_updateProjects.scss";
-
+import "animate.css";
 import { listenToAuthChanges } from "./scripts/auth/listenToAuthChanges ";
 
 listenToAuthChanges();
