@@ -11,6 +11,7 @@ export function listenToAuthChanges() {
   const addList = document.getElementById("add-list") as HTMLElement;
   const management = document.getElementById("management") as HTMLElement;
   const content = document.getElementById("content") as HTMLElement;
+  const header = document.querySelector("header")! as HTMLElement;
   if (content) content.style.display = "none";
   if (management) management.style.display = "none";
 
@@ -18,15 +19,16 @@ export function listenToAuthChanges() {
     if (user) {
       const registerComponent = document.getElementById("register-form");
       const loginComponent = document.getElementById("login-form");
-      const headerComponent = document.getElementById("header");
-      if (headerComponent) {
-        headerComponent.remove();
-      }
+
       if (loginComponent) {
         loginComponent.remove();
       }
       if (registerComponent) {
         registerComponent.remove();
+      }
+
+      if (header) {
+        header.style.display = "flex";
       }
 
       new Header();
@@ -46,7 +48,6 @@ export function listenToAuthChanges() {
       if (content) content.style.display = "none";
       if (management) management.style.display = "none";
       addList.style.display = "none";
-
       new Register();
     }
   });

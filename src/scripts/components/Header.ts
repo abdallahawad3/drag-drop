@@ -3,6 +3,7 @@ import { Base } from "./Base";
 import { signOut } from "firebase/auth";
 export class Header extends Base<HTMLElement> {
   private _logoutIcon!: HTMLElement;
+  private _header!: HTMLElement;
   constructor() {
     super({
       elementId: "header",
@@ -10,14 +11,14 @@ export class Header extends Base<HTMLElement> {
       templateId: "header",
       isBefore: true,
     });
-
+    this._header = document.querySelector("header") as HTMLElement;
     this._logoutIcon = this.element.querySelector(".logo") as HTMLElement;
     this._logoutIcon.addEventListener("click", this._handleLogout.bind(this));
   }
   private async _handleLogout() {
     signOut(auth)
       .then(() => {
-        setTimeout(() => {}, 300);
+        this._header.style.display = "none";
       })
       .catch((error) => {
         console.error("Error signing out: ", error);
