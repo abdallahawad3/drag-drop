@@ -25,14 +25,14 @@ export class Login extends Base<HTMLDivElement> {
     new DotLottie({
       autoplay: true,
       loop: true,
-      canvas: document.querySelector("#login-lottie")!,
+      canvas: document.querySelector("#login-lottie")! as HTMLCanvasElement,
       src: "../../../public/assets/img/register.lottie", // replace with your .lottie or .json file URL
     });
 
     new DotLottie({
       autoplay: true,
       loop: true,
-      canvas: document.querySelector("#login-icon")!,
+      canvas: document.querySelector("#login-icon")! as HTMLCanvasElement,
       src: "../../../public/assets/img/Registered.lottie", // replace with your .lottie or .json file URL
     });
     this.element.classList.add("visible");
