@@ -13,7 +13,6 @@ export function listenToAuthChanges() {
   const content = document.getElementById("content") as HTMLElement;
   if (content) content.style.display = "none";
   if (management) management.style.display = "none";
-  addList.style.display = "none";
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -44,6 +43,10 @@ export function listenToAuthChanges() {
         new ProjectList({ listId: list.id, status: list.name, projects: list.projects });
       });
     } else {
+      if (content) content.style.display = "none";
+      if (management) management.style.display = "none";
+      addList.style.display = "none";
+
       new Register();
     }
   });

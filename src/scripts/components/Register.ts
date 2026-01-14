@@ -138,7 +138,6 @@ export class Register extends Base<HTMLDivElement> {
   private async _registerUser(email: string, password: string) {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User registered:", result.user);
       this._clearForm();
       return result.user;
     } catch (err) {

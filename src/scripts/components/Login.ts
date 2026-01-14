@@ -94,7 +94,6 @@ export class Login extends Base<HTMLDivElement> {
   private async _loginUser(email: string, password: string) {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in:", result.user);
       return result.user;
     } catch (err) {
       createErrorMessage({

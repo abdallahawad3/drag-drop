@@ -17,7 +17,7 @@ export class Header extends Base<HTMLElement> {
   private async _handleLogout() {
     signOut(auth)
       .then(() => {
-        window.location.reload();
+        setTimeout(() => {}, 300);
       })
       .catch((error) => {
         console.error("Error signing out: ", error);

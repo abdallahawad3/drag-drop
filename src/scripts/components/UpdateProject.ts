@@ -78,7 +78,6 @@ export class UpdateProject extends Base<HTMLDivElement> {
     });
     if (updatedDescriptionValidation.length > 0) {
       if (this.isErrorExists) {
-        console.log("SAAS");
         return;
       }
       this.descriptionInput.focus();
