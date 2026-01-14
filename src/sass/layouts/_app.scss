@@ -21,9 +21,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: start;
-  gap: 20px;
   margin-left: 20px;
-  margin-top: 20px;
+  margin-top: 90px;
   @media (max-width: 768px) {
     width: 100vw;
   }
@@ -35,13 +34,24 @@ body {
   background-position: center top;
   background-size: cover;
   background-attachment: fixed; /* optional */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1);
 }
 
 #project-list {
-  border: 2px solid rgba(116, 0, 248, 0.9);
   border-radius: 8px;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-height: 80vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+
+#project-list ul div {
+  background-color: rgba(116, 0, 248, 0.9);
+  margin-inline: 10px;
 }
 
 #content {
@@ -49,15 +59,13 @@ body {
   display: flex;
   justify-content: flex-start;
   gap: 20px;
-  padding: 20px;
+  padding-top: 90px;
   overflow-x: auto;
   margin-left: 20px;
 }
 
-#content div {
+#content .project-container {
   min-width: 300px;
-  flex-grow: 1;
-  flex-shrink: 1;
 }
 
 body::-webkit-scrollbar {
@@ -76,10 +84,6 @@ body::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.6);
 }
 
-body {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1);
-}
 body::after {
   content: "";
   position: fixed;

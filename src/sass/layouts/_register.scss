@@ -2,47 +2,26 @@
   display: flex;
   align-items: center;
   background-color: #fff;
-  padding: 0 50px;
   width: 100%;
-  min-height: 100vh;
-  .welcome-section {
-    position: absolute;
-    left: 50%;
-    top: 10px;
-    transform: translateX(-50%);
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 18px;
-      color: #666;
-      text-align: center;
-      max-width: 400px;
-    }
-  }
+  min-height: fit-content;
+  color: #000;
+
   .icon {
     flex: 1;
     display: flex;
     justify-content: center;
+    height: 100%;
+    background-color: #0056b3;
     align-items: center;
     canvas {
       width: 90%;
       height: 300px;
     }
   }
-  color: #000;
   .register-form {
     flex: 1;
-    padding: 20px;
-    background-color: #f9f9f9;
+    align-content: center;
+    padding: 50px;
     border-radius: 8px;
     .register-header {
       text-align: center;
@@ -63,7 +42,7 @@
       input {
         width: 100%;
         font-size: 16px;
-        padding: 8px;
+        padding: 16px 8px;
         box-sizing: border-box;
         border: 1px solid #ccc;
         border-radius: 3px;
@@ -79,7 +58,6 @@
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: #007bff;
           cursor: pointer;
           font-size: 14px;
           padding: 0;
@@ -119,6 +97,20 @@
           text-decoration: underline;
         }
       }
+
+      @media (max-width: 768px) {
+        .register-header {
+          h2 {
+            font-size: 24px;
+          }
+          p {
+            font-size: 14px !important;
+            max-width: 70% !important;
+            margin: auto;
+            font-weight: 500;
+          }
+        }
+      }
     }
 
     @media (max-width: 768px) {
@@ -140,39 +132,18 @@
     }
   }
   @media (max-width: 768px) {
-    min-height: fit-content;
-    flex-direction: column;
+    height: fit-content;
+    .icon {
+      display: none;
+    }
     padding: 20px;
     .welcome-section {
-      position: static;
-      transform: none;
-      text-align: center;
-      h1 {
-        font-size: 20px;
-      }
-
-      p {
-        font-size: 14px;
-      }
-    }
-    .icon {
-      order: 2;
-      margin-top: 20px;
-      canvas {
-        height: 200px !important;
-        width: 90% !important;
-      }
+      display: none;
     }
     .register-form {
-      order: 1;
+      flex: none;
       width: 100%;
-      margin-bottom: 20px;
-      .icon {
-        canvas {
-          height: 200px !important;
-          width: 90% !important;
-        }
-      }
+      height: 100%;
     }
   }
 }

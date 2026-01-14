@@ -7,6 +7,7 @@ import {
 import { Base } from "./Base";
 import { Register } from "./Register";
 import { auth } from "../services/firebase";
+import { DotLottie } from "@lottiefiles/dotlottie-web";
 
 export class Login extends Base<HTMLDivElement> {
   private _emailInput!: HTMLInputElement;
@@ -21,9 +22,22 @@ export class Login extends Base<HTMLDivElement> {
       templateId: "login",
       isBefore: true,
     });
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.querySelector("#login-lottie")!,
+      src: "../../../public/assets/img/register.lottie", // replace with your .lottie or .json file URL
+    });
+
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.querySelector("#login-icon")!,
+      src: "../../../public/assets/img/Registered.lottie", // replace with your .lottie or .json file URL
+    });
     this.element.classList.add("visible");
     this._emailInput = this.element.querySelector("#email") as HTMLInputElement;
-    this._registerForm = this.element.querySelector(".login-form") as HTMLFormElement;
+    this._registerForm = this.element.querySelector(".login-header") as HTMLFormElement;
     this._passwordInput = this.element.querySelector("#password") as HTMLInputElement;
     this._loginButton = this.element.querySelector("button") as HTMLButtonElement;
     this._loginButton.addEventListener("click", this._handleLogin.bind(this));
@@ -87,7 +101,7 @@ export class Login extends Base<HTMLDivElement> {
         input: this._registerForm,
         message: "Invalid email or password.",
         showBorder: false,
-        isBefore: true,
+        isBefore: false,
         showStyle: true,
       });
     }

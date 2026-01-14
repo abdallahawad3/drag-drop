@@ -62,39 +62,39 @@
 
     <template class="login">
       <div class="login-container">
-        <div class="login-header">
-          <h2>Login</h2>
+        <div class="login-image animate__animated animate__fadeIn animate__delay-[.2s]">
+          <canvas id="login-lottie" style="width: 600px; height: 600px"></canvas>
         </div>
-        <form class="login-form">
+
+        <form class="login-form animate__animated animate__fadeIn animate__delay-[.2s]">
+          <div class="login-header">
+            <h2>Welcome Back!</h2>
+            <canvas id="login-icon" style="width: 50px; height: 50px"></canvas>
+          </div>
           <div class="form-control">
             <label for="email">Email</label>
             <input type="text" id="email" />
           </div>
           <div class="form-control">
             <label for="password">Password</label>
-            <input type="password" id="password" />
+            <div class="password-wrapper">
+              <input type="password" id="password" />
+              <i class="show-password bx bx-eye-slash"></i>
+            </div>
           </div>
           <button type="submit">Login</button>
+          <div class="login-footer">
+            <p>Don't have an account? <span class="register-link">Register</span></p>
+          </div>
         </form>
-        <div class="login-footer">
-          <p>Don't have an account? <span class="register-link">Register</span></p>
-        </div>
       </div>
     </template>
     <template class="register-template">
       <div class="register-container">
-        <div class="welcome-section">
-          <h1 class="animate__animated animate__rubberBand">Welcome to Darg And Drop</h1>
-          <p class="animate__animated animate__fadeIn animate__delay-.7s">
-            Create your account to get started!
-          </p>
+        <div class="icon animate__animated animate__fadeIn animate__delay-[.2s]">
+          <canvas id="dotlottie-canvas" style="width: 600px; height: 600px"></canvas>
         </div>
-        <div class="">
-          <div class="icon">
-            <canvas id="dotlottie-canvas" style="width: 600px; height: 600px"></canvas>
-          </div>
-        </div>
-        <div class="register-form">
+        <div class="register-form animate__animated animate__fadeIn animate__delay-[.4s]">
           <div class="register-header">
             <h2>
               Create an new account
@@ -104,7 +104,7 @@
               Join us and start organizing your projects today!
             </p>
           </div>
-          <form class="register-form">
+          <form class="">
             <div class="form-control">
               <label for="username">Username</label>
               <input type="text" id="username" />
@@ -163,7 +163,15 @@
         </form>
       </div>
     </template>
-
+    <template class="header">
+      <header class="header-container">
+        <h1 class="app-title">Project Management App</h1>
+        <div class="logo">
+          <span>Logout</span>
+          <i class="bx bx-arrow-out-right-circle-half logout-icon"></i>
+        </div>
+      </header>
+    </template>
     <div id="overlay" class=""></div>
     <div id="app">
       <div id="management"></div>

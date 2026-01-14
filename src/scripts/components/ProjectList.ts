@@ -123,8 +123,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _handleDragOver(event: DragEvent) {
     event.preventDefault();
     const list = this.element.querySelector("ul")! as HTMLUListElement;
-    list.style.backgroundColor = "#f0f0f0";
-    list.style.border = "2px dashed #000";
+    list.style.border = "2px dashed #fff";
   }
   private _handleDragLeave(_: DragEvent) {
     const list = this.element.querySelector("ul")! as HTMLUListElement;
