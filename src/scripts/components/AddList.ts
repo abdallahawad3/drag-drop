@@ -177,18 +177,20 @@ export class AddList extends Base<HTMLDivElement> {
         ...list,
         userId: user.uid,
         createdAt: new Date(),
+      }).then(() => {
+        const toast = Toast.getInstance();
+        toast.show("List added successfully!", {
+          duration: 3000,
+          position: "top-right",
+          type: "success",
+        });
       });
       new ProjectList({
         listId: list.id,
         status: list.name,
         projects: [],
       });
-      const toast = Toast.getInstance();
-      toast.show("List added successfully!", {
-        duration: 3000,
-        position: "top-right",
-        type: "success",
-      });
+
       this._notifyListeners();
     } catch (error) {
       console.error("Firestore Error ❌", error);
@@ -219,12 +221,7 @@ export class AddList extends Base<HTMLDivElement> {
       status: ProjectStatus.Initial,
       userId: auth.currentUser ? auth.currentUser.uid : "",
     });
-    const toast = Toast.getInstance();
-    toast.show("Project added successfully!", {
-      duration: 2000,
-      position: "top-right",
-      type: "success",
-    });
+
     this.addProjectsToList(listId, newProject);
   }
 
@@ -280,6 +277,13 @@ export class AddList extends Base<HTMLDivElement> {
           description: Projects.description,
           listId: listId,
         }),
+      }).then(() => {
+        const toast = Toast.getInstance();
+        toast.show("Project added to list successfully!", {
+          duration: 2000,
+          position: "top-right",
+          type: "success",
+        });
       });
 
       listUl.insertAdjacentElement("beforeend", newProject.element);
