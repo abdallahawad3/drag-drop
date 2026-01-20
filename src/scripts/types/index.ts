@@ -8,5 +8,6 @@ export interface Projects {
 export interface ProjectsList {
   id: string;
   name: string;
+  userId: string;
   projects: Projects[];
 }

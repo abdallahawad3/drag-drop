@@ -33,13 +33,14 @@ class ProjectState {
    * @param title - The title of the project.
    * @param description - A brief description of the project.
    */
-  public createProject(title: string, description: string, listId: string) {
+  public createProject(title: string, description: string, listId: string, userId: string) {
     const newProject = new ProjectRules({
       id: uuid(),
       title,
       description,
       status: ProjectStatus.Initial,
       listId,
+      userId, // Assign the userId to the project
     });
 
     this._projects.push(newProject);

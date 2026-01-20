@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAcAwTvzEmvrnebOOG7YNFb9tEAcjPIi9U",
   authDomain: "darg-drop.firebaseapp.com",
@@ -15,3 +17,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Add userId to Firestore queries
+
+// Example function to fetch projects for the logged-in user
+export const fetchUserProjects = async (userId: string) => {
+  const projectsRef = collection(db, "projects");
+  const q = query(projectsRef, where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+};

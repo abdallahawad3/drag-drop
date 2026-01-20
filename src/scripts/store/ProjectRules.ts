@@ -12,11 +12,13 @@ export class ProjectRules {
   public description: string;
   public status: ProjectStatus;
   public listId: string;
-  constructor({ id, title, description, status, listId }: IProps) {
+  public userId: string; // Optional userId property
+  constructor({ id, title, description, status, listId, userId }: IProps & { userId: string }) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.status = status;
     this.listId = listId;
+    this.userId = userId;
   }
 }

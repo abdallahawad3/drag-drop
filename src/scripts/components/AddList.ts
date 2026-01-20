@@ -4,8 +4,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { ProjectStatus } from "../enums";
 import { ProjectRules } from "../store/ProjectRules";
@@ -13,7 +15,7 @@ import type { Projects, ProjectsList } from "../types";
 import { createErrorMessage, validationInput } from "../utils/validation_helpers";
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
-import { db } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { ProjectList } from "./ProjectList";
 export class AddList extends Base<HTMLDivElement> {
   private _form!: HTMLFormElement;
@@ -48,9 +50,9 @@ export class AddList extends Base<HTMLDivElement> {
     const isInitialized = localStorage.getItem("lists_initialized");
     if (!isInitialized) {
       this.lists = [
-        { id: uuid(), name: "Initial", projects: [] },
-        { id: uuid(), name: "Active", projects: [] },
-        { id: uuid(), name: "Finished", projects: [] },
+        { id: uuid(), userId: auth.currentUser?.uid || "", name: "Initial", projects: [] },
+        { id: uuid(), userId: auth.currentUser?.uid || "", name: "Active", projects: [] },
+        { id: uuid(), userId: auth.currentUser?.uid || "", name: "Finished", projects: [] },
       ];
 
       localStorage.setItem("lists_initialized", "true");
@@ -76,9 +78,13 @@ export class AddList extends Base<HTMLDivElement> {
       return;
     }
 
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in");
+
     this.addProjectsList({
       id: uuid(),
       name: enteredTitle,
+      userId: user.uid,
       projects: [],
     });
     this._input.value = "";
@@ -93,10 +99,20 @@ export class AddList extends Base<HTMLDivElement> {
   }
   async addProjectsList(list: ProjectsList) {
     try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not authenticated");
+
       const ref = doc(db, "lists", list.id);
-      await setDoc(ref, list);
+
+      await setDoc(ref, {
+        ...list,
+        userId: user.uid, // 🔥 this assigns the list to the user
+        createdAt: new Date(),
+      });
+
       await this.getAlllists();
       this._notifyListeners();
+
       new ProjectList({
         listId: list.id,
         status: list.name,
@@ -161,9 +177,16 @@ export class AddList extends Base<HTMLDivElement> {
   }
 
   async getAlllists() {
+    const user = auth.currentUser;
+    if (!user) return [];
+
     const lists: ProjectsList[] = [];
-    const snap = await getDocs(collection(db, "lists"));
+
+    const q = query(collection(db, "lists"), where("userId", "==", user.uid));
+
+    const snap = await getDocs(q);
     snap.forEach((doc) => lists.push(doc.data() as ProjectsList));
+
     this.lists = lists.filter((list) => list.name !== "__deleted__");
     return this.lists;
   }
