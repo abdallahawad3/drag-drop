@@ -1,5 +1,6 @@
 class Toast {
   private static instance: Toast | null = null;
+  private isToastVisible: boolean = false; // Track visibility
 
   private constructor() {}
 
@@ -18,6 +19,12 @@ class Toast {
       position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
     } = {},
   ): void {
+    if (this.isToastVisible) {
+      return; // Prevent multiple toasts
+    }
+
+    this.isToastVisible = true; // Set visibility to true
+
     const { type = "info", duration = 4000, position = "top-right" } = options;
 
     // ── Styles ───────────────────────────────────────────────────────────────
@@ -145,6 +152,7 @@ class Toast {
         "transitionend",
         () => {
           toast.remove();
+          this.isToastVisible = false; // Reset visibility
         },
         { once: true },
       );
