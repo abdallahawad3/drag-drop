@@ -1,6 +1,7 @@
 import { auth } from "../services/firebase";
 import { Base } from "./Base";
 import { signOut } from "firebase/auth";
+import { Toast } from "./Toast";
 export class Header extends Base<HTMLElement> {
   private _logoutIcon!: HTMLElement;
   private _header!: HTMLElement;
@@ -18,6 +19,12 @@ export class Header extends Base<HTMLElement> {
   private async _handleLogout() {
     signOut(auth)
       .then(() => {
+        const toast = Toast.getInstance();
+        toast.show("Logout successful!", {
+          duration: 2000,
+          position: "top-right",
+          type: "success",
+        });
         this._header.style.display = "none";
       })
       .catch((error) => {

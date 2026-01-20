@@ -18,6 +18,7 @@ import { v4 as uuid } from "uuid";
 import { auth, db } from "../services/firebase";
 import { ProjectList } from "./ProjectList";
 import { Project } from "./Project";
+import { Toast } from "./Toast";
 export class AddList extends Base<HTMLDivElement> {
   private _form!: HTMLFormElement;
   private _input!: HTMLInputElement;
@@ -136,6 +137,12 @@ export class AddList extends Base<HTMLDivElement> {
     });
     this.lists = this.lists.filter((list) => list.id !== listId);
     document.getElementById(listId)?.remove();
+    const toast = Toast.getInstance();
+    toast.show("List deleted successfully!", {
+      duration: 2000,
+      position: "top-right",
+      type: "success",
+    });
     this._notifyListeners();
   }
 
@@ -168,13 +175,19 @@ export class AddList extends Base<HTMLDivElement> {
       const ref = doc(db, "lists", list.id);
       await setDoc(ref, {
         ...list,
-        userId: user.uid, // 🔥 this assigns the list to the user
+        userId: user.uid,
         createdAt: new Date(),
       });
       new ProjectList({
         listId: list.id,
         status: list.name,
         projects: [],
+      });
+      const toast = Toast.getInstance();
+      toast.show("List added successfully!", {
+        duration: 3000,
+        position: "top-right",
+        type: "success",
       });
       this._notifyListeners();
     } catch (error) {
@@ -206,6 +219,12 @@ export class AddList extends Base<HTMLDivElement> {
       status: ProjectStatus.Initial,
       userId: auth.currentUser ? auth.currentUser.uid : "",
     });
+    const toast = Toast.getInstance();
+    toast.show("Project added successfully!", {
+      duration: 2000,
+      position: "top-right",
+      type: "success",
+    });
     this.addProjectsToList(listId, newProject);
   }
 
@@ -220,6 +239,12 @@ export class AddList extends Base<HTMLDivElement> {
     const ref = doc(db, "lists", listId);
     await updateDoc(ref, {
       name: newTitle,
+    });
+    const toast = Toast.getInstance();
+    toast.show("List title updated successfully!", {
+      duration: 2000,
+      position: "top-right",
+      type: "success",
     });
   }
 
@@ -291,6 +316,12 @@ export class AddList extends Base<HTMLDivElement> {
     const updatedToProjects = [...toData.projects, project];
     await updateDoc(fromRef, { projects: updatedFromProjects });
     await updateDoc(toRef, { projects: updatedToProjects });
+    const toast = Toast.getInstance();
+    toast.show("Project moved successfully!", {
+      duration: 2000,
+      position: "top-right",
+      type: "success",
+    });
   }
 
   /**
@@ -367,7 +398,12 @@ export class AddList extends Base<HTMLDivElement> {
             descriptionElement.textContent = updates.description;
           }
         }
-
+        const toast = Toast.getInstance();
+        toast.show("Project updated successfully!", {
+          duration: 2000,
+          position: "top-right",
+          type: "success",
+        });
         return updatedProject;
       }
       return project;
@@ -403,6 +439,12 @@ export class AddList extends Base<HTMLDivElement> {
     if (projectElement) {
       projectElement.remove();
     }
+    const toast = Toast.getInstance();
+    toast.show("Project deleted successfully!", {
+      duration: 2000,
+      position: "top-right",
+      type: "success",
+    });
     await updateDoc(ref, { projects: updatedProjects });
   }
 

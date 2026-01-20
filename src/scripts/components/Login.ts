@@ -7,6 +7,7 @@ import {
 import { Base } from "./Base";
 import { Register } from "./Register";
 import { auth } from "../services/firebase";
+import { Toast } from "./Toast";
 const { DotLottie } = await import("@lottiefiles/dotlottie-web");
 
 export class Login extends Base<HTMLDivElement> {
@@ -42,7 +43,7 @@ export class Login extends Base<HTMLDivElement> {
     this._loginButton = this.element.querySelector("button") as HTMLButtonElement;
     this._loginButton.addEventListener("click", this._handleLogin.bind(this));
     this._showRegisterFormButton = this.element.querySelector(
-      ".register-link"
+      ".register-link",
     ) as HTMLButtonElement;
     this._showRegisterFormButton.addEventListener("click", this._showRegisterForm.bind(this));
     this.element.addEventListener("submit", this._handleLogin.bind(this));
@@ -93,9 +94,23 @@ export class Login extends Base<HTMLDivElement> {
 
   private async _loginUser(email: string, password: string) {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result.user;
+      await signInWithEmailAndPassword(auth, email, password).then((res) => {
+        const toast = Toast.getInstance();
+        toast.show("Login successful!", {
+          duration: 2000,
+          position: "top-right",
+          type: "success",
+        });
+
+        return res.user;
+      });
     } catch (err) {
+      const toast = Toast.getInstance();
+      toast.show("Invalid email or password.", {
+        duration: 3000,
+        position: "top-right",
+        type: "error",
+      });
       createErrorMessage({
         input: this._registerForm,
         message: "Invalid email or password.",

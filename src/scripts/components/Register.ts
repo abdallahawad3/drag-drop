@@ -8,6 +8,7 @@ import {
 import { Base } from "./Base";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { Login } from "./Login";
+import { Toast } from "./Toast";
 export class Register extends Base<HTMLDivElement> {
   private _registerForm!: HTMLFormElement;
   private _emailInput!: HTMLInputElement;
@@ -145,7 +146,12 @@ export class Register extends Base<HTMLDivElement> {
       await signOut(auth);
       const registerForm = document.getElementById("register-form");
       const loginForm = document.getElementById("login-form");
-
+      const toast = Toast.getInstance();
+      toast.show("Registration successful! Please log in.", {
+        duration: 4000,
+        position: "top-right",
+        type: "success",
+      });
       if (registerForm) registerForm.style.display = "none";
       if (loginForm) {
         loginForm.style.display = "block";
