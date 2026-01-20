@@ -130,6 +130,7 @@ export class AddList extends Base<HTMLDivElement> {
       description,
       listId,
       status: ProjectStatus.Initial,
+      userId: auth.currentUser ? auth.currentUser.uid : "",
     });
 
     this.addProjectsToList(listId, newProject);
