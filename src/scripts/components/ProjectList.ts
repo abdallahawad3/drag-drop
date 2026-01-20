@@ -1,9 +1,10 @@
 import type { ProjectRules } from "../store/ProjectRules";
+import type { Projects } from "../types";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Popup } from "./Popup";
 import { Project } from "./Project";
-
+import type { ProjectsList } from "../types/index";
 export class ProjectList extends Base<HTMLDivElement> {
   private _listContainer: HTMLUListElement;
   private _editIcon: HTMLElement;
@@ -11,21 +12,22 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _closeIcon: HTMLElement;
   private _deleteIcon: HTMLElement;
   private _titleElement: HTMLHeadingElement;
-  constructor({ listId, status }: { listId: string; status: string; projects: ProjectRules[] }) {
+  public list: ProjectsList[];
+
+  constructor({ listId, status }: { listId: string; status: string; projects: Projects[] }) {
     super({
       elementId: "project-list",
       hostId: "content",
       templateId: "projects-template",
       isBefore: true,
     });
-
     this._listContainer = this.element.querySelector("ul") as HTMLUListElement;
     this._titleElement = this.element.querySelector("h2") as HTMLHeadingElement;
     this._editIcon = this.element.querySelector(".edit-icon") as HTMLElement;
     this._addIcon = this.element.querySelector(".add-list-icon") as HTMLElement;
     this._closeIcon = this.element.querySelector(".close-list-icon") as HTMLElement;
     this._deleteIcon = this.element.querySelector(".delete-list-icon") as HTMLElement;
-
+    this.list = [];
     this._listContainer.id = listId;
 
     const currentList = addListInstance.lists.find((l) => l.id === listId);
@@ -48,7 +50,7 @@ export class ProjectList extends Base<HTMLDivElement> {
         }
         this._titleElement.textContent = updatedList.name;
         this._renderProjects(updatedList.projects);
-      }
+      },
     );
   }
 
@@ -69,7 +71,7 @@ export class ProjectList extends Base<HTMLDivElement> {
             addListInstance.deleteList(listId);
             this.element.remove();
           }
-        }
+        },
       );
     });
     this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
@@ -107,7 +109,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   }
 
   // We need to render projects based on their status
-  private _renderProjects(projects: ProjectRules[]) {
+  private _renderProjects(projects: Projects[]) {
     this._listContainer.innerHTML = "";
     for (const project of projects) {
       new Project(project, this._listContainer.id);
@@ -124,17 +126,39 @@ export class ProjectList extends Base<HTMLDivElement> {
     event.preventDefault();
     const list = this.element.querySelector("ul")! as HTMLUListElement;
     list.style.border = "2px dashed #fff";
+    list.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
   }
   private _handleDragLeave(_: DragEvent) {
     const list = this.element.querySelector("ul")! as HTMLUListElement;
     list.style.backgroundColor = "none";
     list.style.border = "none";
   }
-
-  private _handleDrop(event: DragEvent) {
+  private async _handleDrop(event: DragEvent) {
     event.preventDefault();
-    const projectId = event.dataTransfer!.getData("text/plain");
-    addListInstance.moveProject(projectId, this._listContainer.id);
-    this._handleDragLeave(event);
+    event.stopPropagation();
+    const toUList = this.element.querySelector("ul") as HTMLUListElement;
+    if (!toUList) return;
+    const projectId = event.dataTransfer?.getData("text/plain");
+    const fromListId = event.dataTransfer?.getData("application/x-from-list-id");
+    if (!projectId || !fromListId) {
+      console.warn("Missing drag data — drop cancelled");
+      return;
+    }
+    const fromUList = document.getElementById(fromListId) as HTMLUListElement | null;
+    // Clean up visual feedback
+    toUList.style.border = "none";
+    toUList.style.backgroundColor = "";
+
+    if (!fromUList) {
+      console.warn("Source list not found:", fromListId);
+      return;
+    }
+
+    if (fromUList === toUList) {
+      console.log("Dropped in the same list — no move needed");
+      return;
+    }
+
+    await addListInstance.moveProject(projectId, fromUList.id, toUList.id);
   }
 }

@@ -1,4 +1,3 @@
-import { ProjectStatus } from "../enums";
 import { projectState } from "../store/ProjectState";
 import { validationInput } from "../utils/validation_helpers";
 import { addListInstance } from "./AddList";
@@ -62,7 +61,7 @@ export class UpdateProject extends Base<HTMLDivElement> {
       this.titleInput.classList.add("error");
       this.titleInput.insertAdjacentElement(
         "afterend",
-        this._createErrorMessage(updatedTitleValidation)
+        this._createErrorMessage(updatedTitleValidation),
       );
       return;
     }
@@ -83,7 +82,7 @@ export class UpdateProject extends Base<HTMLDivElement> {
       this.descriptionInput.focus();
       this.descriptionInput.insertAdjacentElement(
         "afterend",
-        this._createErrorMessage(updatedDescriptionValidation)
+        this._createErrorMessage(updatedDescriptionValidation),
       );
       return;
     }
@@ -108,12 +107,9 @@ export class UpdateProject extends Base<HTMLDivElement> {
   }
 
   private _EditProject() {
-    addListInstance.editProjectsInList(this._listId, {
-      id: this._id,
-      title: this._title,
-      description: this._description,
-      status: ProjectStatus.Initial,
-      listId: this._listId, // You might want to pass the status if needed
+    addListInstance.updateProject(this._listId, this._id, {
+      title: this.titleInput.value,
+      description: this.descriptionInput.value,
     });
     projectState.EditProject(this._id, this._title, this._description);
   }

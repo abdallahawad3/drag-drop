@@ -2,10 +2,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase";
 import { Fields } from "../components/Fields";
 import { addListInstance } from "../components/AddList";
-import type { ProjectRules } from "../store/ProjectRules";
-import { ProjectList } from "../components/ProjectList";
 import { Register } from "../components/Register";
 import { Header } from "../components/Header";
+import type { ProjectsList } from "../types";
+import { ProjectList } from "../components/ProjectList";
 
 export function listenToAuthChanges() {
   const addList = document.getElementById("add-list") as HTMLElement;
@@ -15,7 +15,7 @@ export function listenToAuthChanges() {
   if (content) content.style.display = "none";
   if (management) management.style.display = "none";
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       const registerComponent = document.getElementById("register-form");
       const loginComponent = document.getElementById("login-form");
@@ -36,12 +36,8 @@ export function listenToAuthChanges() {
       if (content) content.style.display = "flex";
       if (management) management.style.display = "block";
       addList.style.display = "block";
-      const lists = addListInstance.lists as {
-        id: string;
-        name: string;
-        projects: ProjectRules[];
-      }[];
-      lists.forEach((list: { id: string; name: string; projects: ProjectRules[] }) => {
+      const lists = (await addListInstance.getAlllists()) as ProjectsList[];
+      lists.forEach((list: ProjectsList) => {
         new ProjectList({ listId: list.id, status: list.name, projects: list.projects });
       });
     } else {

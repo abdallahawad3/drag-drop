@@ -1,18 +1,25 @@
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { ProjectStatus } from "../enums";
 import { ProjectRules } from "../store/ProjectRules";
+import type { Projects, ProjectsList } from "../types";
 import { createErrorMessage, validationInput } from "../utils/validation_helpers";
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
+import { db } from "../services/firebase";
 export class AddList extends Base<HTMLDivElement> {
   private _form!: HTMLFormElement;
   private _input!: HTMLInputElement;
-  private _lists: { id: string; name: string; projects: ProjectRules[] }[] = localStorage.getItem(
-    "projectLists"
-  )
-    ? JSON.parse(localStorage.getItem("projectLists")!)
-    : [];
   private listeners: Function[] = [];
   private static _instance: AddList;
+  public lists: ProjectsList[] = [];
   constructor() {
     super({
       elementId: "add-list",
@@ -25,6 +32,7 @@ export class AddList extends Base<HTMLDivElement> {
     this._form.addEventListener("submit", this._submitHandler.bind(this));
     this._initializeLists();
     this._notifyListeners();
+    this.getAlllists();
   }
 
   public static getInstance() {
@@ -36,15 +44,18 @@ export class AddList extends Base<HTMLDivElement> {
   }
 
   private _initializeLists() {
-    if (this._lists.length === 0) {
-      this._lists = [
+    const isInitialized = localStorage.getItem("lists_initialized");
+    if (!isInitialized) {
+      this.lists = [
         { id: uuid(), name: "Initial", projects: [] },
         { id: uuid(), name: "Active", projects: [] },
         { id: uuid(), name: "Finished", projects: [] },
       ];
-      this._saveListsToLocalStorage();
+
+      localStorage.setItem("lists_initialized", "true");
     }
   }
+
   private _submitHandler(event: Event) {
     event.preventDefault();
     const enteredTitle = this._input.value.trim();
@@ -63,20 +74,30 @@ export class AddList extends Base<HTMLDivElement> {
       });
       return;
     }
-    const obj = {
+
+    this.addProjectsList({
       id: uuid(),
       name: enteredTitle,
       projects: [],
-    };
-
-    this._addList(obj);
+    });
     this._input.value = "";
   }
-  private _addList(obj: { id: string; name: string; projects: ProjectRules[] }) {
-    this._lists.push(obj);
+  async deleteList(listId: string) {
+    const ref = doc(db, "lists", listId);
+    await updateDoc(ref, {
+      name: "__deleted__",
+    });
+    this.lists = this.lists.filter((list) => list.id !== listId);
     this._notifyListeners();
-    this._saveListsToLocalStorage();
-    window.location.reload();
+  }
+  async addProjectsList(list: ProjectsList) {
+    try {
+      const ref = doc(db, "lists", list.id);
+      await setDoc(ref, list);
+      this._notifyListeners();
+    } catch (error) {
+      console.error("Firestore Error ❌", error);
+    }
   }
 
   public addProject(title: string, description: string, listId: string) {
@@ -84,116 +105,121 @@ export class AddList extends Base<HTMLDivElement> {
       id: uuid(),
       title,
       description,
-      status: ProjectStatus.Initial,
       listId,
+      status: ProjectStatus.Initial,
     });
 
-    addListInstance.addProjectToList(listId, newProject);
+    this.addProjectsToList(listId, newProject);
   }
 
-  public addProjectToList(listId: string, project: ProjectRules) {
-    const list = this._lists.find((lst) => lst.id === listId);
-    if (list) {
-      list.projects.push(project);
-      this._saveListsToLocalStorage();
-    }
-    this._notifyListeners();
+  async updateListTitle(listId: string, newTitle: string) {
+    const ref = doc(db, "lists", listId);
+    await updateDoc(ref, {
+      name: newTitle,
+    });
   }
 
-  public updateProjectsInList(targetListId: string, project: ProjectRules, oldListId?: string) {
-    if (oldListId && oldListId !== targetListId) {
-      this.removeProjectFromList(oldListId, project.id);
-    }
-    const targetList = this._lists.find((lst) => lst.id === targetListId);
-    if (!targetList) return;
-
-    const alreadyExists = targetList.projects.some((p) => p.id === project.id);
-    if (!alreadyExists) {
-      targetList.projects.push(project);
-    }
-    this._notifyListeners();
-    this._saveListsToLocalStorage();
-  }
-
-  public removeProjectFromList(listId: string, projectId: string) {
-    const list = this._lists.find((lst) => lst.id === listId);
-    if (list) {
-      list.projects = list.projects.filter((proj) => proj.id !== projectId);
-      this._saveListsToLocalStorage();
-    }
-    this._notifyListeners();
-  }
-  public get lists() {
-    return [...this._lists];
-  }
-
-  private _saveListsToLocalStorage() {
-    localStorage.setItem("projectLists", JSON.stringify(this._lists));
-  }
-
-  private _notifyListeners() {
-    for (const listenerFn of this.listeners) {
-      listenerFn([...this._lists]);
-    }
-  }
-  public addListener(listenerFn: Function) {
-    this.listeners.push(listenerFn);
-  }
-
-  public updateListTitle(listId: string, newTitle: string) {
-    const list = this._lists.find((lst) => lst.id === listId);
-    if (list) {
-      list.name = newTitle;
-      this._saveListsToLocalStorage();
+  async addProjectsToList(listId: string, Projects: Projects) {
+    try {
+      const ref = doc(db, "lists", listId);
+      await updateDoc(ref, {
+        projects: arrayUnion({
+          id: Projects.id,
+          title: Projects.title,
+          description: Projects.description,
+          listId: listId,
+        }),
+      });
       this._notifyListeners();
-    }
-    this._notifyListeners();
-  }
-
-  deleteList(listId: string) {
-    this._lists = this._lists.filter((lst) => lst.id !== listId);
-    this._saveListsToLocalStorage();
-    this._notifyListeners();
-  }
-
-  editProjectsInList(listId: string, project: ProjectRules) {
-    const list = this._lists.find((lst) => lst.id === listId);
-    const projIndex = list?.projects.findIndex((proj) => proj.id === project.id);
-    if (list && projIndex !== undefined && projIndex > -1) {
-      list.projects[projIndex] = project;
-      this._saveListsToLocalStorage();
-      this._notifyListeners();
+    } catch (error) {
+      console.error("Firestore Error ❌", error);
     }
   }
 
-  deleteProjectFromList(listId: string, projectId: string) {
-    const list = this._lists.find((lst) => lst.id === listId);
-    if (list) {
-      const newProjects = list.projects.filter((proj) => proj.id !== projectId);
-      list.projects = newProjects;
-      this._saveListsToLocalStorage();
-      this._notifyListeners();
-    }
+  async moveProject(projectId: string, fromListId: string, toListId: string) {
+    console.log("Moving project...", fromListId, toListId);
+    const fromRef = doc(db, "lists", fromListId);
+    const toRef = doc(db, "lists", toListId);
+    const fromSnap = await getDoc(fromRef);
+    const toSnap = await getDoc(toRef);
+    if (!fromSnap.exists() || !toSnap.exists()) return;
+    const fromData = fromSnap.data();
+    const toData = toSnap.data();
+    const project = fromData.projects.find((p: any) => p.id === projectId);
+    if (!project) return;
+    const updatedFromProjects = fromData.projects.filter((p: any) => p.id !== projectId);
+    const updatedToProjects = [...toData.projects, project];
+    await updateDoc(fromRef, { projects: updatedFromProjects });
+    await updateDoc(toRef, { projects: updatedToProjects });
+  }
+
+  async getAlllists() {
+    const lists: ProjectsList[] = [];
+    const snap = await getDocs(collection(db, "lists"));
+    snap.forEach((doc) => lists.push(doc.data() as ProjectsList));
+    this.lists = lists.filter((list) => list.name !== "__deleted__");
+    return this.lists;
+  }
+
+  async removeProjectsFromList(listId: string, ProjectsId: string) {
+    const ref = doc(db, "lists", listId);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const list = snap.data();
+    const updatedProjects = list.projects.filter((p: any) => p.id !== ProjectsId);
+
+    await updateDoc(ref, { projects: updatedProjects });
+  }
+
+  async updateProject(
+    listId: string,
+    projectId: string,
+    updates: { title?: string; description?: string },
+  ) {
+    const ref = doc(db, "lists", listId);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    const updatedProjects = data.projects.map((project: any) => {
+      if (project.id === projectId) {
+        return {
+          ...project,
+          ...updates,
+        };
+      }
+      return project;
+    });
+
+    await updateDoc(ref, {
+      projects: updatedProjects,
+    });
   }
 
   public static pushListener(listenerFn: Function) {
     this.getInstance().addListener(listenerFn);
   }
 
-  moveProject(projectId: string, targetListId: string) {
-    let projectToMove: ProjectRules | null = null;
-    let oldListId: string | null = null;
-    for (const list of this._lists) {
-      const projIndex = list.projects.findIndex((proj) => proj.id === projectId);
-      if (projIndex > -1) {
-        projectToMove = list.projects[projIndex];
-        oldListId = list.id;
-        break;
-      }
+  async deleteProject(listId: string, projectId: string) {
+    const ref = doc(db, "lists", listId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) throw new Error("List not found");
+    const data = snap.data();
+    const updatedProjects = data.projects.filter((p: Projects) => p.id !== projectId);
+    await updateDoc(ref, { projects: updatedProjects });
+  }
+
+  private _notifyListeners() {
+    for (const listenerFn of this.listeners) {
+      listenerFn([...this.lists]);
     }
-    if (projectToMove) {
-      this.updateProjectsInList(targetListId, projectToMove, oldListId!);
-    }
+  }
+  public addListener(listenerFn: Function) {
+    this.listeners.push(listenerFn);
   }
 }
 

@@ -1,15 +1,15 @@
-import type { ProjectRules } from "../store/ProjectRules";
+import type { Projects } from "../types";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
 import { Popup } from "./Popup";
 import { UpdateProject } from "./UpdateProject";
 
 export class Project extends Base<HTMLDivElement> {
-  private _project: ProjectRules;
+  private _project: Projects;
   private _deleteBtn: HTMLElement;
   private _editBtn: HTMLElement;
   private _projectListId: string;
-  constructor(project: ProjectRules, projectListId: string) {
+  constructor(project: Projects, projectListId: string) {
     super({
       elementId: project.id,
       hostId: projectListId,
@@ -30,7 +30,7 @@ export class Project extends Base<HTMLDivElement> {
         this._project.title,
         this._project.description,
         this._project.id,
-        projectListId
+        projectListId,
       );
     });
     this._runDragging();
@@ -38,7 +38,7 @@ export class Project extends Base<HTMLDivElement> {
   private _renderProject() {
     const titleElement = this.element.querySelector(".project-title") as HTMLHeadingElement;
     const descriptionElement = this.element.querySelector(
-      ".project-description"
+      ".project-description",
     ) as HTMLParagraphElement;
     titleElement.textContent = this._project.title;
     descriptionElement.textContent = this._project.description;
@@ -51,9 +51,9 @@ export class Project extends Base<HTMLDivElement> {
       true,
       (confirm: boolean) => {
         if (confirm) {
-          addListInstance.deleteProjectFromList(this._projectListId, this._project.id);
+          addListInstance.deleteProject(this._projectListId, this._project.id);
         }
-      }
+      },
     );
   }
 
@@ -83,7 +83,14 @@ export class Project extends Base<HTMLDivElement> {
    */
   private _handleDragStart(event: DragEvent) {
     this.element.style.opacity = "0.5";
+    const fromList = this.element.closest("ul") as HTMLUListElement | null;
+
+    if (!fromList) {
+      console.warn("Could not find parent <ul> during dragstart");
+      return;
+    }
     event.dataTransfer!.setData("text/plain", this._project.id);
+    event.dataTransfer!.setData("application/x-from-list-id", fromList.id); // ← added
     event.dataTransfer!.effectAllowed = "move";
   }
 

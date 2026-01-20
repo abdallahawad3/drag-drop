@@ -101,8 +101,8 @@ export class Fields {
     return inputValue;
   }
 
-  private _renderSelectItems() {
-    const lists = addListInstance.lists;
+  private async _renderSelectItems() {
+    const lists = await addListInstance.getAlllists();
     for (const list of lists) {
       const option = document.createElement("option");
       option.value = list.id;
