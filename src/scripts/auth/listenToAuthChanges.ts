@@ -50,6 +50,17 @@ export function listenToAuthChanges() {
       if (content) content.style.display = "none";
       if (management) management.style.display = "none";
       addList.style.display = "none";
+      const headerInstance = document.querySelector("#header");
+      const fieldsInstance = document.querySelector(".form");
+      content.innerHTML = "";
+      // management.innerHTML = "";
+      if (headerInstance) {
+        headerInstance.remove();
+      }
+      if (fieldsInstance) {
+        fieldsInstance.remove();
+      }
+
       new Register();
     }
   });
