@@ -1,4 +1,4 @@
-import { addListInstance } from "../components/AddList";
+// import { addListInstance } from "../components/AddList";
 import { ProjectStatus } from "../enums";
 import { ProjectRules } from "./ProjectRules";
 import { v4 as uuid } from "uuid";
@@ -96,8 +96,7 @@ class ProjectState {
     // 1. Update project's list reference
     project.listId = newListId;
 
-    // 2. Update both lists (remove from old, add to new)
-    addListInstance.updateProjectsInList(newListId, project, oldListId);
+    // addListInstance.updateProject(newListId, project, oldListId);
 
     // 3. Persist projects array (it contains the updated listId)
     localStorage.setItem("projects", JSON.stringify(this._projects));
