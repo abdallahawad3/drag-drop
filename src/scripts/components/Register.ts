@@ -6,7 +6,7 @@ import {
   validationInput,
 } from "../utils/validation_helpers";
 import { Base } from "./Base";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { Login } from "./Login";
 export class Register extends Base<HTMLDivElement> {
   private _registerForm!: HTMLFormElement;
@@ -138,17 +138,20 @@ export class Register extends Base<HTMLDivElement> {
     this._registerUser(this._emailInput.value, this._passwordInput.value);
   };
 
-  private _clearForm() {
-    this._usernameInput.value = "";
-    this._emailInput.value = "";
-    this._passwordInput.value = "";
-  }
-
   private async _registerUser(email: string, password: string) {
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      this._clearForm();
-      return result.user;
+      await createUserWithEmailAndPassword(auth, email, password);
+      // Success!
+      await signOut(auth);
+      const registerForm = document.getElementById("register-form");
+      const loginForm = document.getElementById("login-form");
+
+      if (registerForm) registerForm.style.display = "none";
+      if (loginForm) {
+        loginForm.style.display = "block";
+      } else {
+        new Login();
+      }
     } catch (err) {
       createErrorMessage({ input: this._emailInput, message: (err as Error).message });
     }

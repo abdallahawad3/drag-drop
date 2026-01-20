@@ -23,10 +23,9 @@ export function listenToAuthChanges() {
   if (management) management.style.display = "none";
 
   onAuthStateChanged(auth, async (user) => {
+    const registerComponent = document.getElementById("register-form");
+    const loginComponent = document.getElementById("login-form");
     if (user) {
-      const registerComponent = document.getElementById("register-form");
-      const loginComponent = document.getElementById("login-form");
-
       if (loginComponent) {
         loginComponent.remove();
       }
@@ -73,7 +72,20 @@ export function listenToAuthChanges() {
         fieldsInstance.remove();
       }
 
-      new Register();
+      // ─── This is the new part ───────────────────────────────
+      if (registerComponent) {
+        registerComponent.style.display = "none"; // or .remove()
+      }
+
+      // Show login form (create if it doesn't exist)
+      if (!loginComponent) {
+        new Register(); // ← assuming Register component can also render login
+        // OR better: create a separate Login component
+        // new Login();
+      } else {
+        loginComponent.style.display = "block";
+      }
+      // ─────────────────────────────────────────────────────────
     }
   });
 }
