@@ -1,4 +1,3 @@
-import type { ProjectRules } from "../store/ProjectRules";
 import type { Projects } from "../types";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
@@ -29,29 +28,29 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._deleteIcon = this.element.querySelector(".delete-list-icon") as HTMLElement;
     this.list = [];
     this._listContainer.id = listId;
-
     const currentList = addListInstance.lists.find((l) => l.id === listId);
+
     if (currentList) {
       this._titleElement.textContent = currentList.name;
       const header = this.element.querySelector(".list-header") as HTMLElement;
-      if (header) header.textContent = status.toUpperCase();
+      if (header) header.textContent = status;
       this._renderProjects(currentList.projects);
     }
 
     this._setupEventListeners(listId);
     this._runDragging();
 
-    addListInstance.addListener(
-      (freshLists: { id: string; name: string; projects: ProjectRules[] }[]) => {
-        const updatedList = freshLists.find((l) => l.id === listId);
-        if (!updatedList) {
-          this.element.remove();
-          return;
-        }
-        this._titleElement.textContent = updatedList.name;
-        this._renderProjects(updatedList.projects);
-      },
-    );
+    addListInstance.addListener(async () => {
+      const updatedList = await addListInstance
+        .getAlllists()
+        .then((lists) => lists.find((l) => l.id === listId));
+      if (!updatedList) {
+        this.element.remove();
+        return;
+      }
+      this._titleElement.textContent = updatedList.name;
+      this._renderProjects(updatedList.projects);
+    });
   }
 
   private _setupEventListeners(listId: string) {
@@ -158,7 +157,12 @@ export class ProjectList extends Base<HTMLDivElement> {
       console.log("Dropped in the same list — no move needed");
       return;
     }
-
+    const projectElement = document.getElementById(projectId) as HTMLLIElement | null;
+    if (projectElement) {
+      toUList.appendChild(projectElement);
+    } else {
+      console.warn("Project element not found:", projectId);
+    }
     await addListInstance.moveProject(projectId, fromUList.id, toUList.id);
   }
 }

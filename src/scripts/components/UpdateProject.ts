@@ -49,8 +49,8 @@ export class UpdateProject extends Base<HTMLDivElement> {
     const updatedTitleValidation = validationInput({
       value: this.titleInput.value,
       required: true,
+      maxLength: 20,
       minLength: 5,
-      maxLength: 50,
       target: "Title",
     });
     if (updatedTitleValidation.length > 0) {
@@ -71,8 +71,8 @@ export class UpdateProject extends Base<HTMLDivElement> {
     const updatedDescriptionValidation = validationInput({
       value: this.descriptionInput.value,
       required: true,
-      minLength: 10,
-      maxLength: 200,
+      minLength: 5,
+      maxLength: 20,
       target: "Description",
     });
     if (updatedDescriptionValidation.length > 0) {

@@ -20,9 +20,17 @@ export class Fields {
     this._host.insertAdjacentElement("afterbegin", this.element);
     this._listSelect = this.element.querySelector("#list") as HTMLSelectElement;
     this.element.addEventListener("submit", this._handelAddProject.bind(this));
+
+    this.pushListeners();
     this._renderSelectItems();
   }
 
+  private pushListeners() {
+    addListInstance.addListener(() => {
+      this._listSelect.innerHTML = "";
+      this._renderSelectItems();
+    });
+  }
   private _handelAddProject(e: Event) {
     e.preventDefault();
     const titleInput = this._getTargetInput("title");
@@ -73,6 +81,9 @@ export class Fields {
       });
       return;
     }
+
+    clearErrorMessages({ input: descInput });
+
     addListInstance.addProject(titleValue, descValue, listValue);
     titleInput.value = "";
     descInput.value = "";

@@ -6,8 +6,14 @@ import { Register } from "../components/Register";
 import { Header } from "../components/Header";
 import type { ProjectsList } from "../types";
 import { ProjectList } from "../components/ProjectList";
-
+let isListening = false;
 export function listenToAuthChanges() {
+  if (isListening) {
+    console.warn("listenToAuthChanges already running — skipping duplicate call");
+    return;
+  }
+  isListening = true;
+
   const addList = document.getElementById("add-list") as HTMLElement;
   const management = document.getElementById("management") as HTMLElement;
   const content = document.getElementById("content") as HTMLElement;

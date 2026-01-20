@@ -10,6 +10,6 @@ import "./sass/layouts/_addList.scss";
 import "./sass/layouts/_updateProjects.scss";
 import "./sass/layouts/_header.scss";
 import "animate.css";
-import { listenToAuthChanges } from "./scripts/auth/listenToAuthChanges ";
+import { listenToAuthChanges } from "./scripts/auth/listenToAuthChanges";
 
 listenToAuthChanges();

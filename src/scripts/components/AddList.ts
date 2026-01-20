@@ -14,6 +14,7 @@ import { createErrorMessage, validationInput } from "../utils/validation_helpers
 import { Base } from "./Base";
 import { v4 as uuid } from "uuid";
 import { db } from "../services/firebase";
+import { ProjectList } from "./ProjectList";
 export class AddList extends Base<HTMLDivElement> {
   private _form!: HTMLFormElement;
   private _input!: HTMLInputElement;
@@ -94,7 +95,13 @@ export class AddList extends Base<HTMLDivElement> {
     try {
       const ref = doc(db, "lists", list.id);
       await setDoc(ref, list);
+      await this.getAlllists();
       this._notifyListeners();
+      new ProjectList({
+        listId: list.id,
+        status: list.name,
+        projects: [],
+      });
     } catch (error) {
       console.error("Firestore Error ❌", error);
     }
@@ -130,6 +137,7 @@ export class AddList extends Base<HTMLDivElement> {
           listId: listId,
         }),
       });
+      await this.getAlllists();
       this._notifyListeners();
     } catch (error) {
       console.error("Firestore Error ❌", error);
@@ -137,7 +145,6 @@ export class AddList extends Base<HTMLDivElement> {
   }
 
   async moveProject(projectId: string, fromListId: string, toListId: string) {
-    console.log("Moving project...", fromListId, toListId);
     const fromRef = doc(db, "lists", fromListId);
     const toRef = doc(db, "lists", toListId);
     const fromSnap = await getDoc(fromRef);
@@ -159,18 +166,6 @@ export class AddList extends Base<HTMLDivElement> {
     snap.forEach((doc) => lists.push(doc.data() as ProjectsList));
     this.lists = lists.filter((list) => list.name !== "__deleted__");
     return this.lists;
-  }
-
-  async removeProjectsFromList(listId: string, ProjectsId: string) {
-    const ref = doc(db, "lists", listId);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) return;
-
-    const list = snap.data();
-    const updatedProjects = list.projects.filter((p: any) => p.id !== ProjectsId);
-
-    await updateDoc(ref, { projects: updatedProjects });
   }
 
   async updateProject(
@@ -198,6 +193,9 @@ export class AddList extends Base<HTMLDivElement> {
     await updateDoc(ref, {
       projects: updatedProjects,
     });
+
+    await this.getAlllists();
+    this._notifyListeners();
   }
 
   public static pushListener(listenerFn: Function) {
@@ -211,6 +209,8 @@ export class AddList extends Base<HTMLDivElement> {
     const data = snap.data();
     const updatedProjects = data.projects.filter((p: Projects) => p.id !== projectId);
     await updateDoc(ref, { projects: updatedProjects });
+    await this.getAlllists();
+    this._notifyListeners();
   }
 
   private _notifyListeners() {
