@@ -36,7 +36,7 @@ export class Register extends Base<HTMLDivElement> {
       src: "../../../assets/img/Registered.lottie", // replace with your .lottie or .json file URL
     });
     this._showConfirmPasswordButton = this.element.querySelector(
-      "#confirm-password+i"
+      "#confirm-password+i",
     ) as HTMLButtonElement;
     this._showPasswordButton = this.element.querySelector("#password+i") as HTMLButtonElement;
     this._registerForm = this.element.querySelector(".register-form") as HTMLFormElement;
@@ -55,7 +55,7 @@ export class Register extends Base<HTMLDivElement> {
     });
     this._showConfirmPasswordButton.addEventListener("click", () => {
       const confirmPasswordInput = this.element.querySelector(
-        "input#confirm-password"
+        "input#confirm-password",
       ) as HTMLInputElement;
       this._togglePasswordVisibility(confirmPasswordInput, this._showConfirmPasswordButton);
     });
@@ -115,8 +115,17 @@ export class Register extends Base<HTMLDivElement> {
     clearErrorMessages({ input: this._passwordInput });
 
     const confirmPasswordInput = this.element.querySelector(
-      "input#confirm-password"
+      "input#confirm-password",
     ) as HTMLInputElement;
+
+    if (confirmPasswordInput.value.trim().length === 0) {
+      createErrorMessage({
+        input: confirmPasswordInput,
+        message: "Please confirm your password.",
+      });
+      return;
+    }
+    clearErrorMessages({ input: confirmPasswordInput });
 
     if (this._passwordInput.value !== confirmPasswordInput.value) {
       createErrorMessage({

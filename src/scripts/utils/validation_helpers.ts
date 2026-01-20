@@ -58,6 +58,17 @@ export const createErrorMessage = ({
   } else {
     input.insertAdjacentElement("afterend", p);
   }
+
+  // Add event listener to validate input and remove error message if valid
+  input.addEventListener("input", () => {
+    if (input instanceof HTMLInputElement && input.value.trim() !== "") {
+      input.style.border = "1px solid #ccc";
+      const errorMessages = input.parentElement?.querySelector(".error-message");
+      if (errorMessages) {
+        errorMessages.remove();
+      }
+    }
+  });
 };
 
 export const clearErrorMessages = ({ input }: { input: HTMLInputElement }) => {

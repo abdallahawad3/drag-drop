@@ -29,28 +29,28 @@ export class ProjectList extends Base<HTMLDivElement> {
     this.list = [];
     this._listContainer.id = listId;
     const currentList = addListInstance.lists.find((l) => l.id === listId);
-
     if (currentList) {
       this._titleElement.textContent = currentList.name;
       const header = this.element.querySelector(".list-header") as HTMLElement;
       if (header) header.textContent = status;
       this._renderProjects(currentList.projects);
+    } else {
+      this._titleElement.textContent = status;
+      const header = this.element.querySelector(".list-header") as HTMLElement;
+      if (header) header.textContent = status;
     }
 
     this._setupEventListeners(listId);
     this._runDragging();
 
-    addListInstance.addListener(async () => {
-      const updatedList = await addListInstance
-        .getAlllists()
-        .then((lists) => lists.find((l) => l.id === listId));
-      if (!updatedList) {
-        this.element.remove();
-        return;
-      }
-      this._titleElement.textContent = updatedList.name;
-      this._renderProjects(updatedList.projects);
-    });
+    const updatedList = addListInstance.lists.find((l) => l.id === listId);
+    if (!updatedList) {
+      this.element.remove();
+      return;
+    }
+
+    this._titleElement.textContent = updatedList.name;
+    this._renderProjects(updatedList.projects);
   }
 
   private _setupEventListeners(listId: string) {

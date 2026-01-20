@@ -6,6 +6,7 @@ import { Register } from "../components/Register";
 import { Header } from "../components/Header";
 import type { ProjectsList } from "../types";
 import { ProjectList } from "../components/ProjectList";
+import { INITIAL_LISTS } from "../data";
 let isListening = false;
 export function listenToAuthChanges() {
   if (isListening) {
@@ -42,10 +43,21 @@ export function listenToAuthChanges() {
       if (content) content.style.display = "flex";
       if (management) management.style.display = "block";
       addList.style.display = "block";
-      const lists = (await addListInstance.getAlllists()) as ProjectsList[];
-      lists.forEach((list: ProjectsList) => {
-        new ProjectList({ listId: list.id, status: list.name, projects: list.projects });
-      });
+      let lists = (await addListInstance.getAlllists()) as ProjectsList[];
+      if (lists.length === 0) {
+        INITIAL_LISTS.forEach(async (list: ProjectsList) => {
+          await addListInstance.addProjectsList({
+            id: list.id,
+            name: list.name,
+            projects: list.projects,
+            userId: user.uid,
+          });
+        });
+      } else {
+        lists.forEach((list: ProjectsList) => {
+          new ProjectList({ listId: list.id, status: list.name, projects: list.projects });
+        });
+      }
     } else {
       if (content) content.style.display = "none";
       if (management) management.style.display = "none";

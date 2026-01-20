@@ -1,4 +1,4 @@
-import { projectState } from "../store/ProjectState";
+// import { projectState } from "../store/ProjectState";
 import { validationInput } from "../utils/validation_helpers";
 import { addListInstance } from "./AddList";
 import { Base } from "./Base";
@@ -41,6 +41,8 @@ export class UpdateProject extends Base<HTMLDivElement> {
   }
 
   private _closeUpdateForm() {
+    this.titleInput.value = "";
+    this.descriptionInput.value = "";
     this.element.classList.toggle("visible");
   }
 
@@ -111,6 +113,5 @@ export class UpdateProject extends Base<HTMLDivElement> {
       title: this.titleInput.value,
       description: this.descriptionInput.value,
     });
-    projectState.EditProject(this._id, this._title, this._description);
   }
 }

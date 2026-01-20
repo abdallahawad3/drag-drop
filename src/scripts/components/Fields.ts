@@ -27,6 +27,7 @@ export class Fields {
 
   private pushListeners() {
     addListInstance.addListener(() => {
+      console.log("first");
       this._listSelect.innerHTML = "";
       this._renderSelectItems();
     });
