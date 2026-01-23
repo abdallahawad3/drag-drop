@@ -134,6 +134,8 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._editIcon.style.display = "block";
     this._addIcon.style.display = "none";
     this._closeIcon.style.display = "none";
+    this._deleteIcon.style.display = "block";
+
     addListInstance.updateListTitle(id, newTitle);
   }
 
@@ -143,6 +145,7 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._editIcon.style.display = "block";
     this._addIcon.style.display = "none";
     this._closeIcon.style.display = "none";
+    this._deleteIcon.style.display = "block";
   }
 
   // We need to render projects based on their status
