@@ -103,6 +103,28 @@ export class ProjectList extends Base<HTMLDivElement> {
       this._closeIcon.style.display = "none";
       return;
     }
+
+    if (newTitle.length < 3) {
+      const toast = Toast.getInstance();
+      toast.show("List title must be at least 3 characters long.", { type: "error" });
+      this._titleElement.textContent = this._lastTitleStatus;
+      this._titleElement.contentEditable = "false";
+      this._editIcon.style.display = "block";
+      this._addIcon.style.display = "none";
+      this._closeIcon.style.display = "none";
+      return;
+    }
+
+    if (newTitle.length > 20) {
+      const toast = Toast.getInstance();
+      toast.show("List title cannot exceed 20 characters.", { type: "error" });
+      this._titleElement.textContent = this._lastTitleStatus;
+      this._titleElement.contentEditable = "false";
+      this._editIcon.style.display = "block";
+      this._addIcon.style.display = "none";
+      this._closeIcon.style.display = "none";
+      return;
+    }
     this._titleElement.contentEditable = "false";
     this._editIcon.style.display = "block";
     this._addIcon.style.display = "none";
