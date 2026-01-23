@@ -58,7 +58,13 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _setupEventListeners(listId: string) {
     this._lastTitleStatus = this._titleElement.textContent || "";
     this._titleElement.addEventListener("beforeinput", (e) => {
-      if (this._titleElement.textContent.length > 20) {
+      const inputEvent = e as InputEvent;
+
+      const isDeleting =
+        inputEvent.inputType === "deleteContentBackward" ||
+        inputEvent.inputType === "deleteContentForward";
+
+      if (!isDeleting && this._titleElement.textContent!.length >= 20) {
         e.preventDefault();
       }
     });
