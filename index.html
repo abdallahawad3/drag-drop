@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -48,10 +48,12 @@
       <div class="project-container">
         <div class="list-header-container">
           <h2 class="list-header"></h2>
-          <i class="bx bx-edit edit-icon"></i>
-          <i class="bx bx-plus add-list-icon"></i>
-          <i class="bx bx-x close-list-icon"></i>
-          <i class="bx bx-trash delete-list-icon"></i>
+          <div class="list-header-icons">
+            <i class="bx bx-edit edit-icon"></i>
+            <span class="add-list-icon" style="cursor: pointer; font-size: 17px">Add</span>
+            <span class="close-list-icon" style="cursor: pointer; font-size: 17px">Cancel</span>
+            <i class="bx bx-trash delete-list-icon"></i>
+          </div>
         </div>
         <ul class="project-lists"></ul>
       </div>

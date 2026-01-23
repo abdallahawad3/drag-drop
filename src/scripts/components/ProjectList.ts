@@ -4,6 +4,7 @@ import { Base } from "./Base";
 import { Popup } from "./Popup";
 import { Project } from "./Project";
 import type { ProjectsList } from "../types/index";
+import { Toast } from "./Toast";
 export class ProjectList extends Base<HTMLDivElement> {
   private _listContainer: HTMLUListElement;
   private _editIcon: HTMLElement;
@@ -12,6 +13,7 @@ export class ProjectList extends Base<HTMLDivElement> {
   private _deleteIcon: HTMLElement;
   private _titleElement: HTMLHeadingElement;
   public list: ProjectsList[];
+  private _lastTitleStatus: string = "";
 
   constructor({ listId, status }: { listId: string; status: string; projects: Projects[] }) {
     super({
@@ -54,7 +56,9 @@ export class ProjectList extends Base<HTMLDivElement> {
   }
 
   private _setupEventListeners(listId: string) {
+    this._lastTitleStatus = this._titleElement.textContent || "";
     this._editIcon.addEventListener("click", () => this._updateListTitle(listId));
+    this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
     this._deleteIcon.addEventListener("click", () => {
       if (addListInstance.lists.length <= 1) {
         new Popup("At least one list must exist.", "Cannot Delete List");
@@ -73,8 +77,6 @@ export class ProjectList extends Base<HTMLDivElement> {
         },
       );
     });
-    this._closeIcon.addEventListener("click", this._canceledUpdateListTitle.bind(this));
-    this._addIcon.addEventListener("click", () => this._handleUpdateListTitle(listId));
   }
 
   private _updateListTitle(id: string) {
@@ -83,7 +85,7 @@ export class ProjectList extends Base<HTMLDivElement> {
     this._editIcon.style.display = "none";
     this._addIcon.style.display = "block";
     this._closeIcon.style.display = "block";
-    this._deleteIcon.style.display = "block";
+    this._deleteIcon.style.display = "none";
     this._addIcon.addEventListener("click", () => {
       this._handleUpdateListTitle(id);
     });
@@ -91,20 +93,29 @@ export class ProjectList extends Base<HTMLDivElement> {
 
   private _handleUpdateListTitle(id: string) {
     const newTitle = this._titleElement.textContent!.trim();
+    if (newTitle.length === 0) {
+      const toast = Toast.getInstance();
+      toast.show("List title cannot be empty.", { type: "error" });
+      this._titleElement.textContent = this._lastTitleStatus;
+      this._titleElement.contentEditable = "false";
+      this._editIcon.style.display = "block";
+      this._addIcon.style.display = "none";
+      this._closeIcon.style.display = "none";
+      return;
+    }
     this._titleElement.contentEditable = "false";
     this._editIcon.style.display = "block";
     this._addIcon.style.display = "none";
     this._closeIcon.style.display = "none";
-    this._deleteIcon.style.display = "none";
     addListInstance.updateListTitle(id, newTitle);
   }
 
   private _canceledUpdateListTitle() {
+    this._titleElement.textContent = this._lastTitleStatus;
     this._titleElement.contentEditable = "false";
     this._editIcon.style.display = "block";
     this._addIcon.style.display = "none";
     this._closeIcon.style.display = "none";
-    this._deleteIcon.style.display = "none";
   }
 
   // We need to render projects based on their status
